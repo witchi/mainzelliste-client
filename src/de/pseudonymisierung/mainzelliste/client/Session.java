@@ -45,6 +45,7 @@ public class Session {
 		this.sessionId = sessionId;
 		this.connection = connection;
 		this.defaultResultFields = null;
+		this.defaultResultIds = null;
 		this.tempIdById = new HashMap<ID, String>();
 		this.idByTempId = new HashMap<String, ID>();
 	}
@@ -101,9 +102,11 @@ public class Session {
 	}
 
 	/**
-	 * Shortcut for {@link Session#getTempId(ID, Collection, Collection) that uses default value for the returned
-	 * result fields and identifiers. The default values are set via {@link Session#setDefaultResultFields(Collection)}
-	 * and 
+	 * Shortcut for {@link Session#getTempId(ID, Collection, Collection) that
+	 * uses default value for the returned result fields and identifiers. The
+	 * default values are set via {
+	 * @link Session#setDefaultResultFields(Collection)} and
+	 * 
 	 * @param id
 	 * @return
 	 * @throws MainzellisteNetworkException
@@ -111,13 +114,8 @@ public class Session {
 	 * @throws InvalidSessionException
 	 */
 	public String getTempId(ID id) throws MainzellisteNetworkException,
-			NullPointerException, InvalidSessionException {
-		if (this.getDefaultResultFields() == null) {
-			throw new NullPointerException(
-					"Tried to get temp id with default result fields in a session where"
-							+ " no default result fields are defined.");
-		}
-		return getTempId(id, defaultResultFields, null);
+			InvalidSessionException {
+		return getTempId(id, defaultResultFields, defaultResultIds);
 	}
 
 	/**
@@ -130,12 +128,16 @@ public class Session {
 	 *            A permanent identifier of a patient.
 	 * @return A temporary identifier, valid as long as this session is valid,
 	 *         or null if the given permanent identifier is unknown.
-	 * @throws InvalidSessionException If the sessions does not exist anymore on the Mainzelliste instance.
-	 * @throws MainzellisteNetworkException If a network error occured while making the request.
-	 *  
+	 * @throws InvalidSessionException
+	 *             If the sessions does not exist anymore on the Mainzelliste
+	 *             instance.
+	 * @throws MainzellisteNetworkException
+	 *             If a network error occured while making the request.
+	 * 
 	 */
 	public String getTempId(ID id, Collection<String> resultFields,
-			Collection<String> resultIds) throws MainzellisteNetworkException, InvalidSessionException {
+			Collection<String> resultIds) throws MainzellisteNetworkException,
+			InvalidSessionException {
 
 		if (id == null)
 			throw new NullPointerException(
@@ -222,18 +224,19 @@ public class Session {
 	public void setDefaultResultFields(Collection<String> defaultResultFields) {
 		this.defaultResultFields = new HashSet<String>(defaultResultFields);
 	}
-	
+
 	/**
 	 * @return the defaultResultIds
 	 */
-	Set<String> getDefaultResultIds() {
+	public Set<String> getDefaultResultIds() {
 		return defaultResultIds;
 	}
 
 	/**
-	 * @param defaultResultIds the defaultResultIds to set
+	 * @param defaultResultIds
+	 *            the defaultResultIds to set
 	 */
-	void setDefaultResultIds(Collection<String> defaultResultIds) {
+	public void setDefaultResultIds(Collection<String> defaultResultIds) {
 		this.defaultResultIds = new HashSet<String>(defaultResultIds);
 	}
 
