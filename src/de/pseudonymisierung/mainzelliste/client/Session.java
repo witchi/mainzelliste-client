@@ -95,10 +95,13 @@ public class Session {
 	/**
 	 * Delete this session making a DELETE request on the session URI. Further
 	 * calls on the session will fail with an exception.
+	 * 
+	 * @throws MainzellisteNetworkException
+	 *             If a network error occurs while making the request.
 	 */
-	public void destroy() {
-		// TODO - implement Session.destroy
-		throw new UnsupportedOperationException();
+	public void destroy() throws MainzellisteNetworkException {
+		this.connection.doRequest(RequestMethod.DELETE, this.getSessionURI()
+				.toString(), null);
 	}
 
 	/**
