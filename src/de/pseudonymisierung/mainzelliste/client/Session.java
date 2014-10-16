@@ -38,17 +38,17 @@ public class Session {
 	public URI getSessionURI() {
 		try {
 			return connection.getMainzellisteURI()
-					.resolve("sessions")
-					.resolve(sessionId);
+					.resolve("sessions/")
+					.resolve(sessionId + "/");
 		} catch (Exception e) { // URISyntaxException, MalformedURLException
 			/* If an invalid URL is constructed here, something is serioursly wrong. */
 			throw new Error(e);
 		}
 	}
 
-	public boolean isValid() {
-		// TODO - implement Session.isValid
-		throw new UnsupportedOperationException();
+	public boolean isValid() throws MainzellisteNetworkException {
+		MainzellisteResponse response = this.connection.doRequest(RequestMethod.GET, this.getSessionURI().toString(), null);
+		return (response.getStatusCode() == 200);			
 	}
 
 	public void destroy() {
@@ -60,7 +60,11 @@ public class Session {
 	 * 
 	 * @param id
 	 */
-	public String getTempId(ID id) throws MainzellisteNetworkException {
+	public String getTempId(ID id) throws MainzellisteNetworkException, NullPointerException {
+		if (this.getDefaultResultFields() == null) {
+			throw new NullPointerException("Tried to get temp id with default result fields in a session where"
+					+ " no default result fields are defined.");
+		}
 		return getTempId(id, defaultResultFields, null);
 	}
 
@@ -74,10 +78,10 @@ public class Session {
 			throw new NullPointerException("ID object passed to getTempId is null!");
 		t.addSearchId(id);
 		MainzellisteResponse response = this.connection.doRequest(RequestMethod.POST, 
-				getSessionURI().resolve("tokens").toString(),
+				getSessionURI().resolve("tokens/").toString(),
 				t.toJSON().toString());
 		try {
-			return response.getDataJSON().getString("tokenId");	
+			return response.getDataJSON().getString("id");	
 		} catch (JSONException e) {
 			throw new Error(e);
 		}

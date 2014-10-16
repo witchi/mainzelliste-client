@@ -41,8 +41,9 @@ public class MainzellisteConnection {
 	 * 
 	 * @param mainzellisteURI Base URL of the Mainzelliste instance. 
 	 * @param mainzellisteApiKey Api key to authenticate against the Mainzelliste instance.
+	 * @throws URISyntaxException 
 	 */
-	public MainzellisteConnection(URI mainzellisteURI, String mainzellisteApiKey) {
+	public MainzellisteConnection(String mainzellisteURI, String mainzellisteApiKey) throws URISyntaxException {
 		this(mainzellisteURI, mainzellisteApiKey, HttpClientBuilder.create().build());
 	}
 
@@ -54,9 +55,12 @@ public class MainzellisteConnection {
 	 * @param mainzellisteURI Base URI of the Mainzelliste instance. 
 	 * @param mainzellisteApiKey Api key to authenticate against the Mainzelliste instance.
 	 * @param httpClient A HttpClient instance.
+	 * @throws URISyntaxException 
 	 */
-	public MainzellisteConnection(URI mainzellisteURI, String mainzellisteApiKey, CloseableHttpClient httpClient) {
-		this.mainzellisteURI = mainzellisteURI;
+	public MainzellisteConnection(String mainzellisteURI, String mainzellisteApiKey, CloseableHttpClient httpClient) throws URISyntaxException {
+		if (!mainzellisteURI.endsWith("/"))
+			mainzellisteURI += "/";
+		this.mainzellisteURI = new URI(mainzellisteURI);
 		this.mainzellisteApiKey = mainzellisteApiKey;
 		this.httpClient = httpClient;
 	}
@@ -159,7 +163,7 @@ public class MainzellisteConnection {
 	}	
 	
 	public static void main(String args[]) throws URISyntaxException, MainzellisteNetworkException {
-		MainzellisteConnection con = new MainzellisteConnection(new URI("https://patientenliste.de/borg"), "mdatborg");
+		MainzellisteConnection con = new MainzellisteConnection("https://patientenliste.de/borg", "mdatborg");
 		Session mySession = con.createSession();
 		List<String> fieldsToShow = Arrays.asList("vorname", "nachname");
 		List<String> idsToShow = Arrays.asList("pid");
