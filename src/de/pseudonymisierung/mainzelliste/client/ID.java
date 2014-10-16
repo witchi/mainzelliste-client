@@ -11,9 +11,10 @@ import org.codehaus.jettison.json.JSONObject;
  */
 public class ID {
 
-	private String idType;
-	private String idString;
+	private final String idType;
+	private final String idString;
 	private JSONObject json = null;
+	private final int hashCode;
 
 	/**
 	 * Get the id type (in the sense of domain or namespace) of this identifier.
@@ -21,16 +22,14 @@ public class ID {
 	 * Mainzelliste instance.
 	 */
 	public String getIdType() {
-		// TODO - implement ID.getIdType
-		throw new UnsupportedOperationException();
+		return idType;
 	}
 
 	/**
 	 * Get the identifier string of this patient identifier.
 	 */
 	public String getIdString() {
-		// TODO - implement ID.getIdString
-		throw new UnsupportedOperationException();
+		return idString;
 	}
 
 	/**
@@ -60,8 +59,39 @@ public class ID {
 	 *            The identifier string.
 	 */
 	public ID(String idType, String idString) {
+		if (idType == null)
+			throw new NullPointerException("Cannot create ID with idType null");
+		if (idString == null)
+			throw new NullPointerException(
+					"Cannot create ID with idString null");
 		this.idType = idType;
 		this.idString = idString;
+		// Compute hash code only once, as this object is immutable
+		this.hashCode = (idType + idString).hashCode();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof ID))
+			return false;
+		ID idToCompare = (ID) obj;
+		return (this.idString.equals(idToCompare.getIdString()) && this.idType
+				.equals(idToCompare.getIdType()));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.hashCode;
 	}
 
 }

@@ -4,7 +4,9 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.codehaus.jettison.json.JSONException;
@@ -26,6 +28,8 @@ public class Session {
 	private String sessionId;
 	private Set<String> defaultResultFields;
 	private Set<String> defaultResultIds;
+	private Map<ID, String> tempIdById;
+	private Map<String, ID> idByTempId;
 
 	/**
 	 * Create a session with the specified ID and MainzellisteConnector. Used
@@ -41,6 +45,8 @@ public class Session {
 		this.sessionId = sessionId;
 		this.connection = connection;
 		this.defaultResultFields = null;
+		this.tempIdById = new HashMap<ID, String>();
+		this.idByTempId = new HashMap<String, ID>();
 	}
 
 	/**
@@ -117,20 +123,30 @@ public class Session {
 	 */
 	public String getTempId(ID id, Collection<String> resultFields,
 			Collection<String> resultIds) throws MainzellisteNetworkException {
+
+		if (id == null)
+			throw new NullPointerException(
+					"ID object passed to getTempId is null!");
+
+		// Try to find cached value
+		String tempId = this.tempIdById.get(id);
+		if (tempId != null)
+			return tempId;
+
+		// Otherwise get temp id from Mainzelliste and store in cache
 		ReadPatientsToken t = new ReadPatientsToken();
 		if (resultFields != null)
 			t.setResultFields(resultFields);
 		if (resultIds != null)
 			t.setResultIds(resultIds);
-		if (id == null)
-			throw new NullPointerException(
-					"ID object passed to getTempId is null!");
 		t.addSearchId(id);
 		MainzellisteResponse response = this.connection.doRequest(
 				RequestMethod.POST, getSessionURI().resolve("tokens/")
 						.toString(), t.toJSON().toString());
 		try {
-			return response.getDataJSON().getString("id");
+			tempId = response.getDataJSON().getString("id");
+			tempIdById.put(id, tempId);
+			return tempId;
 		} catch (JSONException e) {
 			throw new Error(e);
 		}
@@ -144,8 +160,9 @@ public class Session {
 	 *         created, or null if no such temp id exists.
 	 */
 	public ID getId(String tempId) {
-		// TODO - implement Session.getId
-		throw new UnsupportedOperationException();
+		if (tempId == null)
+			throw new NullPointerException("Temp id passed to getId is null!");
+		return this.idByTempId.get(tempId);
 	}
 
 	/**
