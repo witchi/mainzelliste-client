@@ -60,7 +60,7 @@ public class MainzellisteConnection {
 	 * @param mainzellisteApiKey
 	 *            Api key to authenticate against the Mainzelliste instance.
 	 * @param httpClient
-	 *            A HttpClient instance.
+	 *            A CloseableHttpClient instance.
 	 * @throws URISyntaxException
 	 */
 	public MainzellisteConnection(String mainzellisteURI,
@@ -81,6 +81,13 @@ public class MainzellisteConnection {
 		return mainzellisteURI;
 	}
 
+	/**
+	 * Create a new session on the Mainzelliste instance represented by this
+	 * object.
+	 * 
+	 * @throws MainzellisteNetworkException
+	 *             If a network error occurs while making the request.
+	 */
 	public Session createSession() throws MainzellisteNetworkException {
 		MainzellisteResponse response = this.doRequest(RequestMethod.POST,
 				"sessions", null);
@@ -105,6 +112,21 @@ public class MainzellisteConnection {
 		GET, POST, PUT, DELETE;
 	}
 
+	/**
+	 * Utility method to make requests to this Mainzelliste instance.
+	 * 
+	 * @param method
+	 *            The http method to use (GET, POST, PUT, DELETE).
+	 * @param path
+	 *            The resource path, either absolute or relative to the instance
+	 *            URL.
+	 * @param data
+	 *            The data to transmit.
+	 * @return The response represented as an instance of
+	 *         {@link MainzellisteResponse}.
+	 * @throws MainzellisteNetworkException
+	 *             If a network error occurs while making the request.
+	 */
 	MainzellisteResponse doRequest(RequestMethod method, String path,
 			String data) throws MainzellisteNetworkException {
 		HttpUriRequest request;
@@ -159,39 +181,5 @@ public class MainzellisteConnection {
 			throw new MainzellisteNetworkException("Error while performing a "
 					+ method + " request to " + absoluteUri, t);
 		}
-	}
-
-	JSONObject getData(CloseableHttpResponse response)
-			throws MainzellisteNetworkException {
-		HttpEntity responseEntity;
-		responseEntity = response.getEntity();
-		String resultString;
-		JSONObject result;
-		try {
-			resultString = EntityUtils.toString(responseEntity);
-			if (resultString.equals(""))
-				result = new JSONObject();
-			else
-				result = new JSONObject(resultString);
-		} catch (Throwable t) {
-			throw new MainzellisteNetworkException(
-					"An error occured while reading response from Mainzelliste.",
-					t);
-		}
-
-		return result;
-	}
-
-	public static void main(String args[]) throws URISyntaxException,
-			MainzellisteNetworkException {
-		MainzellisteConnection con = new MainzellisteConnection(
-				"https://patientenliste.de/borg", "mdatborg");
-		Session mySession = con.createSession();
-		List<String> fieldsToShow = Arrays.asList("vorname", "nachname");
-		List<String> idsToShow = Arrays.asList("pid");
-		ID patientToShow = new ID("intid", "1");
-		String tempId = mySession.getTempId(patientToShow, fieldsToShow,
-				idsToShow);
-		System.out.println(tempId);
 	}
 }
