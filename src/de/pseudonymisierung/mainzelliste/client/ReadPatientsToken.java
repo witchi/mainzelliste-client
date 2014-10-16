@@ -14,28 +14,28 @@ public class ReadPatientsToken extends Token {
 	private LinkedList<ID> searchIds;
 	private Set<String> resultFields;
 	private Set<String> resultIds;
-	
+
 	public ReadPatientsToken() {
 		this.searchIds = new LinkedList<ID>();
 		this.resultFields = new HashSet<String>();
 		this.resultIds = new HashSet<String>();
 	}
-	
+
 	public ReadPatientsToken addSearchId(ID id) {
 		this.searchIds.add(id);
 		return this;
 	}
-	
+
 	public ReadPatientsToken addResultField(String fieldName) {
 		this.resultFields.add(fieldName);
 		return this;
 	}
-	
+
 	public ReadPatientsToken addResultId(String idType) {
 		this.resultIds.add(idType);
 		return this;
 	}
-	
+
 	/**
 	 * @return the resultFields
 	 */
@@ -44,7 +44,8 @@ public class ReadPatientsToken extends Token {
 	}
 
 	/**
-	 * @param resultFields the resultFields to set
+	 * @param resultFields
+	 *            the resultFields to set
 	 */
 	public void setResultFields(Collection<String> resultFields) {
 		this.resultFields = new HashSet<String>(resultFields);
@@ -58,7 +59,8 @@ public class ReadPatientsToken extends Token {
 	}
 
 	/**
-	 * @param resultIds the resultIds to set
+	 * @param resultIds
+	 *            the resultIds to set
 	 */
 	public void setResultIds(Collection<String> resultIds) {
 		this.resultIds = new HashSet<String>(resultIds);
@@ -85,10 +87,8 @@ public class ReadPatientsToken extends Token {
 
 	public static void main(String args[]) {
 		ReadPatientsToken t = new ReadPatientsToken();
-		t.addSearchId(new ID("intid", "123"))
-			.addResultField("name")
-			.addResultField("geburtsjahr")
-			.addResultId("pid");
-		System.out.println(t.toJSON().toString());		
+		t.addSearchId(new ID("intid", "123")).addResultField("name")
+				.addResultField("geburtsjahr").addResultId("pid");
+		System.out.println(t.toJSON().toString());
 	}
 }

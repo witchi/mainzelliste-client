@@ -15,7 +15,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -23,47 +22,57 @@ import org.codehaus.jettison.json.JSONObject;
 import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
 
 /**
- * Manages connections to one Mainzelliste instance, authenticated by a specific api key.
- * Provides a public method to create new Sessions and package methods providing
- * access to the Mainzelliste instance to be used by session objects.  
- *  
+ * Manages connections to one Mainzelliste instance, authenticated by a specific
+ * api key. Provides a public method to create new Sessions and package methods
+ * providing access to the Mainzelliste instance to be used by session objects.
+ * 
  */
 public class MainzellisteConnection {
 
 	private static final String mainzellisteApiVersion = "2.0";
 	private final String mainzellisteApiKey;
 	private final URI mainzellisteURI;
-	
+
 	private CloseableHttpClient httpClient;
 
 	/**
 	 * Initialize connection to Mainzelliste with default Http client.
 	 * 
-	 * @param mainzellisteURI Base URL of the Mainzelliste instance. 
-	 * @param mainzellisteApiKey Api key to authenticate against the Mainzelliste instance.
-	 * @throws URISyntaxException 
+	 * @param mainzellisteURI
+	 *            Base URL of the Mainzelliste instance.
+	 * @param mainzellisteApiKey
+	 *            Api key to authenticate against the Mainzelliste instance.
+	 * @throws URISyntaxException
 	 */
-	public MainzellisteConnection(String mainzellisteURI, String mainzellisteApiKey) throws URISyntaxException {
-		this(mainzellisteURI, mainzellisteApiKey, HttpClientBuilder.create().build());
+	public MainzellisteConnection(String mainzellisteURI,
+			String mainzellisteApiKey) throws URISyntaxException {
+		this(mainzellisteURI, mainzellisteApiKey, HttpClientBuilder.create()
+				.build());
 	}
 
 	/**
 	 * Initialize connection to Mainzelliste with a provided Http client. This
-	 * constructor should be used if special properties have to be set for Http connections
-	 * (e.g. a proxy server).
-	 *   
-	 * @param mainzellisteURI Base URI of the Mainzelliste instance. 
-	 * @param mainzellisteApiKey Api key to authenticate against the Mainzelliste instance.
-	 * @param httpClient A HttpClient instance.
-	 * @throws URISyntaxException 
+	 * constructor should be used if special properties have to be set for Http
+	 * connections (e.g. a proxy server).
+	 * 
+	 * @param mainzellisteURI
+	 *            Base URI of the Mainzelliste instance.
+	 * @param mainzellisteApiKey
+	 *            Api key to authenticate against the Mainzelliste instance.
+	 * @param httpClient
+	 *            A HttpClient instance.
+	 * @throws URISyntaxException
 	 */
-	public MainzellisteConnection(String mainzellisteURI, String mainzellisteApiKey, CloseableHttpClient httpClient) throws URISyntaxException {
+	public MainzellisteConnection(String mainzellisteURI,
+			String mainzellisteApiKey, CloseableHttpClient httpClient)
+			throws URISyntaxException {
 		if (!mainzellisteURI.endsWith("/"))
 			mainzellisteURI += "/";
 		this.mainzellisteURI = new URI(mainzellisteURI);
 		this.mainzellisteApiKey = mainzellisteApiKey;
 		this.httpClient = httpClient;
 	}
+
 	/**
 	 * Get the URL of this Mainzelliste instance.
 	 * 
@@ -73,20 +82,22 @@ public class MainzellisteConnection {
 	}
 
 	public Session createSession() throws MainzellisteNetworkException {
-		MainzellisteResponse response = this.doRequest(RequestMethod.POST, "sessions", null);
-		int responseCode = response.getStatusCode(); 
+		MainzellisteResponse response = this.doRequest(RequestMethod.POST,
+				"sessions", null);
+		int responseCode = response.getStatusCode();
 		if (responseCode != 201) {
-			throw  MainzellisteNetworkException.fromResponse(response);
+			throw MainzellisteNetworkException.fromResponse(response);
 		}
 		JSONObject sessionData = response.getDataJSON();
 		String sessionId;
 		try {
 			sessionId = sessionData.getString("sessionId");
 		} catch (JSONException e) {
-			// If we are here, Mainzelliste has responded with a correct status 
+			// If we are here, Mainzelliste has responded with a correct status
 			// code but with illegal data, which is a fatal error.
-			throw new Error("Request to create session returned illegal data", e);
-		}	
+			throw new Error("Request to create session returned illegal data",
+					e);
+		}
 		return new Session(sessionId, this);
 	}
 
@@ -94,11 +105,12 @@ public class MainzellisteConnection {
 		GET, POST, PUT, DELETE;
 	}
 
-	MainzellisteResponse doRequest(RequestMethod method, String path, String data) throws MainzellisteNetworkException {
+	MainzellisteResponse doRequest(RequestMethod method, String path,
+			String data) throws MainzellisteNetworkException {
 		HttpUriRequest request;
 		URI absoluteUri = mainzellisteURI.resolve(path);
 		switch (method) {
-		case GET: 
+		case GET:
 			request = new HttpGet(absoluteUri);
 			break;
 		case POST:
@@ -108,7 +120,9 @@ public class MainzellisteConnection {
 				try {
 					postRequest.setEntity(new StringEntity(data.toString()));
 				} catch (Throwable t) {
-					throw new MainzellisteNetworkException("Error while performing a " + method + " request to " + absoluteUri, t); 
+					throw new MainzellisteNetworkException(
+							"Error while performing a " + method
+									+ " request to " + absoluteUri, t);
 				}
 			}
 			request = postRequest;
@@ -120,12 +134,14 @@ public class MainzellisteConnection {
 				try {
 					putRequest.setEntity(new StringEntity(data.toString()));
 				} catch (Throwable t) {
-					throw new MainzellisteNetworkException("Error while performing a " + method + " request to " + absoluteUri, t); 
+					throw new MainzellisteNetworkException(
+							"Error while performing a " + method
+									+ " request to " + absoluteUri, t);
 				}
 			}
 			request = putRequest;
 			break;
-			
+
 		case DELETE:
 			request = new HttpDelete(absoluteUri);
 			break;
@@ -140,11 +156,13 @@ public class MainzellisteConnection {
 		try {
 			return new MainzellisteResponse(httpClient.execute(request));
 		} catch (Throwable t) {
-			throw new MainzellisteNetworkException("Error while performing a " + method + " request to " + absoluteUri, t); 
+			throw new MainzellisteNetworkException("Error while performing a "
+					+ method + " request to " + absoluteUri, t);
 		}
 	}
-	
-	JSONObject getData(CloseableHttpResponse response) throws MainzellisteNetworkException {
+
+	JSONObject getData(CloseableHttpResponse response)
+			throws MainzellisteNetworkException {
 		HttpEntity responseEntity;
 		responseEntity = response.getEntity();
 		String resultString;
@@ -156,19 +174,24 @@ public class MainzellisteConnection {
 			else
 				result = new JSONObject(resultString);
 		} catch (Throwable t) {
-			throw new MainzellisteNetworkException("An error occured while reading response from Mainzelliste.", t);
+			throw new MainzellisteNetworkException(
+					"An error occured while reading response from Mainzelliste.",
+					t);
 		}
-			
-		return result;		
-	}	
-	
-	public static void main(String args[]) throws URISyntaxException, MainzellisteNetworkException {
-		MainzellisteConnection con = new MainzellisteConnection("https://patientenliste.de/borg", "mdatborg");
+
+		return result;
+	}
+
+	public static void main(String args[]) throws URISyntaxException,
+			MainzellisteNetworkException {
+		MainzellisteConnection con = new MainzellisteConnection(
+				"https://patientenliste.de/borg", "mdatborg");
 		Session mySession = con.createSession();
 		List<String> fieldsToShow = Arrays.asList("vorname", "nachname");
 		List<String> idsToShow = Arrays.asList("pid");
 		ID patientToShow = new ID("intid", "1");
-		String tempId = mySession.getTempId(patientToShow, fieldsToShow, idsToShow);
+		String tempId = mySession.getTempId(patientToShow, fieldsToShow,
+				idsToShow);
 		System.out.println(tempId);
 	}
 }

@@ -9,6 +9,7 @@ public class AddPatientToken extends Token {
 
 	private LinkedList<String> idTypes;
 	private URL callback;
+
 	@Override
 	public JSONObject toJSON() {
 		// TODO Auto-generated method stub
