@@ -33,6 +33,9 @@ public class ID {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Get a JSON representation of this object.
+	 */
 	public JSONObject toJSON() {
 		// As ID is immutable, the JSONObject is created only once and cached
 		// for later use
@@ -49,9 +52,12 @@ public class ID {
 	}
 
 	/**
+	 * Create a patient identifier.
 	 * 
 	 * @param idType
+	 *            Type (aka domain / namespace) of the identifier.
 	 * @param idString
+	 *            The identifier string.
 	 */
 	public ID(String idType, String idString) {
 		this.idType = idType;
