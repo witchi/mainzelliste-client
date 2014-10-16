@@ -100,8 +100,18 @@ public class Session {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Shortcut for {@link Session#getTempId(ID, Collection, Collection) that uses default value for the returned
+	 * result fields and identifiers. The default values are set via {@link Session#setDefaultResultFields(Collection)}
+	 * and 
+	 * @param id
+	 * @return
+	 * @throws MainzellisteNetworkException
+	 * @throws NullPointerException
+	 * @throws InvalidSessionException
+	 */
 	public String getTempId(ID id) throws MainzellisteNetworkException,
-			NullPointerException {
+			NullPointerException, InvalidSessionException {
 		if (this.getDefaultResultFields() == null) {
 			throw new NullPointerException(
 					"Tried to get temp id with default result fields in a session where"
@@ -120,9 +130,12 @@ public class Session {
 	 *            A permanent identifier of a patient.
 	 * @return A temporary identifier, valid as long as this session is valid,
 	 *         or null if the given permanent identifier is unknown.
+	 * @throws InvalidSessionException If the sessions does not exist anymore on the Mainzelliste instance.
+	 * @throws MainzellisteNetworkException If a network error occured while making the request.
+	 *  
 	 */
 	public String getTempId(ID id, Collection<String> resultFields,
-			Collection<String> resultIds) throws MainzellisteNetworkException {
+			Collection<String> resultIds) throws MainzellisteNetworkException, InvalidSessionException {
 
 		if (id == null)
 			throw new NullPointerException(
@@ -143,6 +156,9 @@ public class Session {
 		MainzellisteResponse response = this.connection.doRequest(
 				RequestMethod.POST, getSessionURI().resolve("tokens/")
 						.toString(), t.toJSON().toString());
+		if (response.getStatusCode() == 404) {
+			throw new InvalidSessionException();
+		}
 		try {
 			tempId = response.getDataJSON().getString("id");
 			tempIdById.put(id, tempId);
@@ -204,6 +220,20 @@ public class Session {
 	 */
 	public void setDefaultResultFields(Collection<String> defaultResultFields) {
 		this.defaultResultFields = new HashSet<String>(defaultResultFields);
+	}
+	
+	/**
+	 * @return the defaultResultIds
+	 */
+	Set<String> getDefaultResultIds() {
+		return defaultResultIds;
+	}
+
+	/**
+	 * @param defaultResultIds the defaultResultIds to set
+	 */
+	void setDefaultResultIds(Collection<String> defaultResultIds) {
+		this.defaultResultIds = new HashSet<String>(defaultResultIds);
 	}
 
 }
