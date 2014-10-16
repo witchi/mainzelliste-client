@@ -16,7 +16,7 @@ import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
  * {@link MainzellisteConnection#doRequest(de.pseudonymisierung.mainzelliste.client.MainzellisteConnection.RequestMethod, String, String)
  * MainzellisteConnection#doRequest()}
  */
-public class MainzellisteResponse {
+class MainzellisteResponse {
 
 	private int statusCode;
 
@@ -38,20 +38,25 @@ public class MainzellisteResponse {
 	}
 
 	/**
-	 * @return the statusCode
+	 * Get the HTTP status code of this response.
 	 */
 	public int getStatusCode() {
 		return statusCode;
 	}
 
 	/**
-	 * @return the data
+	 * Get the returned entity.
+	 * 
+	 * @return The returned entity. If the response does not contain an entity,
+	 *         an empty String.
 	 */
 	public String getData() {
 		return data;
 	}
 
-	/** Return data as JSON */
+	/** 
+	 * Return data as JSON object. 
+	 */
 	public JSONObject getDataJSON() throws MainzellisteNetworkException {
 		try {
 			return new JSONObject(this.data);
