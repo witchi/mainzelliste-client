@@ -162,6 +162,7 @@ public class Session {
 		try {
 			tempId = response.getDataJSON().getString("id");
 			tempIdById.put(id, tempId);
+			idByTempId.put(tempId, id);
 			return tempId;
 		} catch (JSONException e) {
 			throw new Error(e);
