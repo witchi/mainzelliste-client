@@ -24,6 +24,10 @@ import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
  */
 public class Session {
 
+	/**
+	 * Set to false when a session is invalidated by calling destroy().
+	 */
+	private boolean isValid;
 	private MainzellisteConnection connection;
 	private String sessionId;
 	private Set<String> defaultResultFields;
@@ -87,6 +91,11 @@ public class Session {
 	 *             If a network error occurs while making the request.
 	 */
 	public boolean isValid() throws MainzellisteNetworkException {
+		/*
+		 * Check internal flag first in order to avoid network access if this
+		 * session was invalidated by calling destroy().
+		 */
+		if (!this.isValid) return false;
 		MainzellisteResponse response = this.connection.doRequest(
 				RequestMethod.GET, this.getSessionURI().toString(), null);
 		return (response.getStatusCode() == 200);
@@ -102,6 +111,7 @@ public class Session {
 	public void destroy() throws MainzellisteNetworkException {
 		this.connection.doRequest(RequestMethod.DELETE, this.getSessionURI()
 				.toString(), null);
+		this.isValid = false;
 	}
 
 	/**
