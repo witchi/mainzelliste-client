@@ -2,7 +2,6 @@ package de.pseudonymisierung.mainzelliste.client;
 
 import java.net.URI;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,7 +41,7 @@ public class Session {
 	 * @param sessionId
 	 *            The session id as returned by the Mainzelliste.
 	 * @param connection
-	 *            A MainzellisteConnections object that represent the instance
+	 *            A MainzellisteConnections object that represents the instance
 	 *            on which this session was created.
 	 */
 	Session(String sessionId, MainzellisteConnection connection) {
@@ -95,7 +94,8 @@ public class Session {
 		 * Check internal flag first in order to avoid network access if this
 		 * session was invalidated by calling destroy().
 		 */
-		if (!this.isValid) return false;
+		if (!this.isValid)
+			return false;
 		MainzellisteResponse response = this.connection.doRequest(
 				RequestMethod.GET, this.getSessionURI().toString(), null);
 		return (response.getStatusCode() == 200);
@@ -117,14 +117,12 @@ public class Session {
 	/**
 	 * Shortcut for {@link Session#getTempId(ID, Collection, Collection) that
 	 * uses default value for the returned result fields and identifiers. The
-	 * default values are set via {
-	 * @link Session#setDefaultResultFields(Collection)} and
+	 * default values are set via
 	 * 
-	 * @param id
-	 * @return
-	 * @throws MainzellisteNetworkException
-	 * @throws NullPointerException
-	 * @throws InvalidSessionException
+	 * @link Session#setDefaultResultFields(Collection)} and
+	 *       {@link Session#setDefaultResultIds(Collection)}.
+	 * 
+	 * @see Session#getTempId(ID, Collection, Collection)
 	 */
 	public String getTempId(ID id) throws MainzellisteNetworkException,
 			InvalidSessionException {
@@ -139,6 +137,14 @@ public class Session {
 	 * 
 	 * @param id
 	 *            A permanent identifier of a patient.
+	 * @param resultFields
+	 *            The IDAT fields that can be retreived by this temp-id. Legal
+	 *            values are all field names that are configured on the
+	 *            connected Mainzelliste instance.
+	 * @param resultIds
+	 *            The permanent identifiers that can be retreived by this
+	 *            temp-id. Legal values are all id types that are configured on
+	 *            the connected Mainzelliste instance.
 	 * @return A temporary identifier, valid as long as this session is valid,
 	 *         or null if the given permanent identifier is unknown.
 	 * @throws InvalidSessionException
@@ -161,7 +167,7 @@ public class Session {
 		if (tempId != null)
 			return tempId;
 
-		// Otherwise get temp id from Mainzelliste and store in cache
+		// Otherwise get temp-id from Mainzelliste and store in cache
 		ReadPatientsToken t = new ReadPatientsToken();
 		if (resultFields != null)
 			t.setResultFields(resultFields);
@@ -185,15 +191,18 @@ public class Session {
 	}
 
 	/**
-	 * Get the corresponding permanent patient identifier for a temp id.
+	 * Get the corresponding permanent patient identifier for a temp-id.
 	 * 
 	 * @param tempId
-	 * @return The corresponding permanent identifier for which the temp id was
-	 *         created, or null if no such temp id exists.
+	 *            A temporary identifier.
+	 * @return The corresponding permanent identifier for which the temp-id was
+	 *         created, or null if no such temp-id exists.
+	 * @throws NullPointerException
+	 *             If tempId is null.
 	 */
 	public ID getId(String tempId) {
 		if (tempId == null)
-			throw new NullPointerException("Temp id passed to getId is null!");
+			throw new NullPointerException("Temp-id passed to getId is null!");
 		return this.idByTempId.get(tempId);
 	}
 
@@ -208,8 +217,8 @@ public class Session {
 	}
 
 	/**
-	 * Remove temporary identifier. The temp id is removed from the internal
-	 * cache and deleted on the Mainzelliste instance by invalidated the
+	 * Remove temporary identifier. The temp-id is removed from the internal
+	 * cache and deleted on the Mainzelliste instance by invalidating the
 	 * corresponding token.
 	 * 
 	 * @throws MainzellisteNetworkException
@@ -242,31 +251,36 @@ public class Session {
 	}
 
 	/**
-	 * @return the defaultResultFields
+	 * Get the current default fields for {@link Session#getTempId(ID)}.
 	 */
 	public Set<String> getDefaultResultFields() {
-		Arrays.asList("vorname", "nachname");
 		return defaultResultFields;
 	}
 
 	/**
+	 * Set the default IDAT fields for {@link Session#getTempId(ID)}.
+	 * 
 	 * @param defaultResultFields
-	 *            the defaultResultFields to set
+	 *            A list of field names, must correspond to field names
+	 *            configured on the connected Mainzelliste instance.
 	 */
 	public void setDefaultResultFields(Collection<String> defaultResultFields) {
 		this.defaultResultFields = new HashSet<String>(defaultResultFields);
 	}
 
 	/**
-	 * @return the defaultResultIds
+	 * Get the current default identifiers for {@link Session#getTempId(ID)}.
 	 */
 	public Set<String> getDefaultResultIds() {
 		return defaultResultIds;
 	}
 
 	/**
+	 * Set the default identifiers for {@link Session#getTempId(ID)}.
+	 * 
 	 * @param defaultResultIds
-	 *            the defaultResultIds to set
+	 *            A list of identifier names, must correspond to id types
+	 *            configured on the connected Mainzelliste instance.
 	 */
 	public void setDefaultResultIds(Collection<String> defaultResultIds) {
 		this.defaultResultIds = new HashSet<String>(defaultResultIds);
