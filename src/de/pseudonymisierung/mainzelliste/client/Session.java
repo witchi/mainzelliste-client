@@ -27,7 +27,7 @@ public class Session {
 	/**
 	 * Set to false when a session is invalidated by calling destroy().
 	 */
-	private boolean isValid;
+	private boolean isValid = true;
 	private MainzellisteConnection connection;
 	private String sessionId;
 	private Set<String> defaultResultFields;
@@ -142,7 +142,7 @@ public class Session {
 	 * @return A temporary identifier, valid as long as this session is valid,
 	 *         or null if the given permanent identifier is unknown.
 	 * @throws InvalidSessionException
-	 *             If the sessions does not exist anymore on the Mainzelliste
+	 *             If the session does not exist anymore on the Mainzelliste
 	 *             instance.
 	 * @throws MainzellisteNetworkException
 	 *             If a network error occured while making the request.
@@ -207,9 +207,28 @@ public class Session {
 		throw new UnsupportedOperationException();
 	}
 
-	public void removeTempId() {
-		// TODO - implement Session.removeTempId
-		throw new UnsupportedOperationException();
+	/**
+	 * Remove temporary identifier. The temp id is removed from the internal
+	 * cache and deleted on the Mainzelliste instance by invalidated the
+	 * corresponding token.
+	 * 
+	 * @throws MainzellisteNetworkException
+	 *             If a network error occured while making the request.
+	 * @throws InvalidSessionException
+	 *             If the session does not exist anymore on the Mainzelliste
+	 *             instance.
+	 */
+	public void removeTempId(String tempId)
+			throws MainzellisteNetworkException, InvalidSessionException {
+		ID idToDelete = this.idByTempId.remove(tempId);
+		if (idToDelete != null)
+			this.tempIdById.remove(idToDelete);
+		MainzellisteResponse response = this.connection.doRequest(
+				RequestMethod.DELETE, getSessionURI().resolve("tokens/")
+						.resolve(tempId).toString(), null);
+		if (response.getStatusCode() == 404) {
+			throw new InvalidSessionException();
+		}
 	}
 
 	/**
