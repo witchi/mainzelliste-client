@@ -54,8 +54,8 @@ class MainzellisteResponse {
 		return data;
 	}
 
-	/** 
-	 * Return data as JSON object. 
+	/**
+	 * Return data as JSON object.
 	 */
 	public JSONObject getDataJSON() throws MainzellisteNetworkException {
 		try {
