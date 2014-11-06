@@ -8,7 +8,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 import de.pseudonymisierung.mainzelliste.client.MainzellisteConnection.RequestMethod;
 import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
@@ -32,6 +34,7 @@ public class Session {
 	private Set<String> defaultResultFields;
 	private Set<String> defaultResultIds;
 	private Map<ID, String> tempIdById;
+
 	private Map<String, ID> idByTempId;
 
 	/**
@@ -114,7 +117,7 @@ public class Session {
 		this.isValid = false;
 	}
 
-	/**
+/**
 	 * Shortcut for {@link Session#getTempId(ID, Collection, Collection) that
 	 * uses default value for the returned result fields and identifiers. The
 	 * default values are set via
@@ -188,6 +191,24 @@ public class Session {
 		} catch (JSONException e) {
 			throw new Error(e);
 		}
+	}
+
+	/**
+	 * Get all temporary identifiers of this session.
+	 * 
+	 * @return
+	 */
+	public Set<String> getTempIds() {
+		return idByTempId.keySet();
+	}
+
+	/**
+	 * Get all permanent identifiers for which this session holds temp ids.
+	 * 
+	 * @return
+	 */
+	public Set<ID> getIDs() {
+		return tempIdById.keySet();
 	}
 
 	/**
@@ -286,4 +307,29 @@ public class Session {
 		this.defaultResultIds = new HashSet<String>(defaultResultIds);
 	}
 
+	/**
+	 * Set Tokens (Temp-IDs) from JSON array. Used by
+	 * {@link MainzellisteConnection#readSession(String)}
+	 * 
+	 * @param tokensJSON
+	 * @throws JSONException
+	 */
+	void setTokens(JSONArray tokensJSON) throws JSONException {
+		for (int i = 0; i < tokensJSON.length(); i++) {
+			JSONObject thisToken = tokensJSON.getJSONObject(i);
+			if (thisToken.getString("type").equals("readPatients")) {
+				JSONObject tokenData = thisToken.getJSONObject("data");
+				JSONArray searchIDs = tokenData.getJSONArray("searchIds");
+				// Token is considered a temp-id if only one ID is searched for
+				if (searchIDs.length() == 1) {
+					String tempId = thisToken.getString("id");
+					JSONObject idJSON = searchIDs.getJSONObject(0);
+					ID id = new ID(idJSON.getString("idType"),
+							idJSON.getString("idString"));
+					tempIdById.put(id, tempId);
+					idByTempId.put(tempId, id);
+				}
+			}
+		}
+	}
 }

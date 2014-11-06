@@ -2,11 +2,6 @@ package de.pseudonymisierung.mainzelliste.client;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -15,10 +10,9 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-
 import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
 
 /**
@@ -106,6 +100,40 @@ public class MainzellisteConnection {
 					e);
 		}
 		return new Session(sessionId, this);
+	}
+
+	/**
+	 * Restore a session from a server.
+	 * 
+	 * @throws MainzellisteNetworkException
+	 * @throws InvalidSessionException
+	 */
+	public Session readSession(String sessionId)
+			throws MainzellisteNetworkException, InvalidSessionException {
+		// Read tokens from session, also check if session exists
+		MainzellisteResponse response = this.doRequest(RequestMethod.GET,
+				"sessions/" + sessionId + "/tokens/", null);
+		if (response.getStatusCode() == 404) {
+			throw new InvalidSessionException();
+		}
+		Session s = new Session(sessionId, this);
+		// No Content -> no tokens
+		if (response.getStatusCode() == 204)
+			return s;
+
+		if (response.getStatusCode() == 200) {
+			try {
+				JSONArray tokensJSON = new JSONArray(response.getData());
+				s.setTokens(tokensJSON);
+				return s;
+			} catch (JSONException e) {
+				throw new Error(
+						"Request to read session tokens returned illegal data",
+						e);
+			}
+		} else { // Illegal status code
+			throw MainzellisteNetworkException.fromResponse(response);
+		}
 	}
 
 	public static enum RequestMethod {
