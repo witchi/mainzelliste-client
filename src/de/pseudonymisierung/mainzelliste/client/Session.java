@@ -231,10 +231,24 @@ public class Session {
 	 * 
 	 * @param patientToEdit
 	 * @param redirect
+	 * @throws MainzellisteNetworkException 
+	 * @throws InvalidSessionException 
 	 */
-	public EditPatientToken getEditPatientToken(ID patientToEdit, URL redirect) {
-		// TODO - implement Session.getEditPatientToken
-		throw new UnsupportedOperationException();
+	public String getEditPatientToken(ID patientToEdit, URL redirect) throws MainzellisteNetworkException, InvalidSessionException {
+		
+		EditPatientToken t = new EditPatientToken(patientToEdit);
+		t.setRedirect(redirect);
+		MainzellisteResponse response = this.connection.doRequest(RequestMethod.POST, this.getSessionURI().resolve("tokens/").toString(), t.toJSON().toString());
+		if (response.getStatusCode() == 404)
+			throw new InvalidSessionException();
+		else if (response.getStatusCode() != 201)
+			throw MainzellisteNetworkException.fromResponse(response);
+		
+		try {
+			return response.getDataJSON().getString("id");
+		} catch (JSONException e) {
+			throw new MainzellisteNetworkException("Request to create token returned illegal data", e);
+		}
 	}
 
 	/**
