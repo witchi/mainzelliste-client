@@ -195,17 +195,15 @@ public class Session {
 
 	/**
 	 * Get all temporary identifiers of this session.
-	 * 
-	 * @return
 	 */
 	public Set<String> getTempIds() {
 		return idByTempId.keySet();
 	}
 
 	/**
-	 * Get all permanent identifiers for which this session holds temp ids.
+	 * Get all permanent identifiers for which this session holds temporary
+	 * identifiers.
 	 * 
-	 * @return
 	 */
 	public Set<ID> getIDs() {
 		return tempIdById.keySet();
@@ -225,30 +223,6 @@ public class Session {
 		if (tempId == null)
 			throw new NullPointerException("Temp-id passed to getId is null!");
 		return this.idByTempId.get(tempId);
-	}
-
-	/**
-	 * 
-	 * @param patientToEdit
-	 * @param redirect
-	 * @throws MainzellisteNetworkException 
-	 * @throws InvalidSessionException 
-	 */
-	public String getEditPatientToken(ID patientToEdit, URL redirect) throws MainzellisteNetworkException, InvalidSessionException {
-		
-		EditPatientToken t = new EditPatientToken(patientToEdit);
-		t.setRedirect(redirect);
-		MainzellisteResponse response = this.connection.doRequest(RequestMethod.POST, this.getSessionURI().resolve("tokens/").toString(), t.toJSON().toString());
-		if (response.getStatusCode() == 404)
-			throw new InvalidSessionException();
-		else if (response.getStatusCode() != 201)
-			throw MainzellisteNetworkException.fromResponse(response);
-		
-		try {
-			return response.getDataJSON().getString("id");
-		} catch (JSONException e) {
-			throw new MainzellisteNetworkException("Request to create token returned illegal data", e);
-		}
 	}
 
 	/**
@@ -276,13 +250,52 @@ public class Session {
 	}
 
 	/**
+	 * Create a token that allows to add a new patient to the Mainzelliste.
 	 * 
 	 * @param idTypes
+	 *            Names of id types that should be created and returned. If
+	 *            null, the default id type (depends on the Mainzelliste
+	 *            configuration) is used.
 	 * @param callback
 	 */
 	public AddPatientToken getAddPatientToken(Set<String> idTypes, URL callback) {
 		// TODO - implement Session.getAddPatientToken
 		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Create a token that allows to edit a patient's identifying data.
+	 * 
+	 * @param patientToEdit
+	 *            The patient that can be edited by using the token.
+	 * @param redirect
+	 *            A redirect URL that the user should be referred to after the
+	 *            edit operation.
+	 * @throws MainzellisteNetworkException
+	 *             If a network error occured while making the request.
+	 * @throws InvalidSessionException
+	 *             If the session does not exist anymore on the Mainzelliste
+	 *             instance.
+	 */
+	public String getEditPatientToken(ID patientToEdit, URL redirect)
+			throws MainzellisteNetworkException, InvalidSessionException {
+
+		EditPatientToken t = new EditPatientToken(patientToEdit);
+		t.setRedirect(redirect);
+		MainzellisteResponse response = this.connection.doRequest(
+				RequestMethod.POST, this.getSessionURI().resolve("tokens/")
+						.toString(), t.toJSON().toString());
+		if (response.getStatusCode() == 404)
+			throw new InvalidSessionException();
+		else if (response.getStatusCode() != 201)
+			throw MainzellisteNetworkException.fromResponse(response);
+
+		try {
+			return response.getDataJSON().getString("id");
+		} catch (JSONException e) {
+			throw new MainzellisteNetworkException(
+					"Request to create token returned illegal data", e);
+		}
 	}
 
 	/**
@@ -322,7 +335,7 @@ public class Session {
 	}
 
 	/**
-	 * Set Tokens (Temp-IDs) from JSON array. Used by
+	 * Set tokens (temp ids) from JSON array. Used by
 	 * {@link MainzellisteConnection#readSession(String)}
 	 * 
 	 * @param tokensJSON

@@ -20,12 +20,13 @@ public class EditPatientToken extends Token {
 		this.patientId = patientId;
 		fieldsToEdit = new HashSet<String>();
 	}
-	
-	public EditPatientToken setRedirect(String url) throws MalformedURLException {
+
+	public EditPatientToken setRedirect(String url)
+			throws MalformedURLException {
 		this.redirect = new URL(url);
 		return this;
 	}
-	
+
 	public EditPatientToken setRedirect(URL url) {
 		this.redirect = url;
 		return this;
@@ -35,7 +36,7 @@ public class EditPatientToken extends Token {
 		this.fieldsToEdit = new HashSet<String>(fieldNames);
 		return this;
 	}
-	
+
 	@Override
 	public JSONObject toJSON() {
 		try {
@@ -43,7 +44,8 @@ public class EditPatientToken extends Token {
 			result.put("type", "editPatient");
 			JSONObject data = new JSONObject();
 			data.put("patientId", this.patientId.toJSON());
-			if (this.redirect != null) data.put("redirect", redirect.toString());
+			if (this.redirect != null)
+				data.put("redirect", redirect.toString());
 			if (this.fieldsToEdit.size() > 0) {
 				JSONArray fieldsToEditJSON = new JSONArray();
 				for (String s : fieldsToEdit) {

@@ -3,7 +3,7 @@ package de.pseudonymisierung.mainzelliste.client;
 import de.pseudonymisierung.mainzelliste.client.MainzellisteResponse;
 
 /**
- * Exception for error concerning the network connection to the Idat server.
+ * Exception for errors concerning the network connection to the Idat server.
  * 
  * @author borg
  *

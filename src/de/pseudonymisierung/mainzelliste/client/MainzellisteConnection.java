@@ -2,6 +2,7 @@ package de.pseudonymisierung.mainzelliste.client;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -13,6 +14,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+
 import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
 
 /**
@@ -103,10 +105,25 @@ public class MainzellisteConnection {
 	}
 
 	/**
-	 * Restore a session from a server.
+	 * Restore a session from a server. It is verified that a session with the
+	 * given session id exists on the Mainzelliste instance and all temp ids
+	 * (i.e. "readPatients" tokens that allow for reading a single patient) are
+	 * retreived by a GET request and added to the session cache.
 	 * 
+	 * This method is useful to restore sessions if session data in the calling
+	 * application is serialized. Neither {@link Session} nor
+	 * {@link MainzellisteConnection} objects can be serialized due to being
+	 * bound to a CloseableHttpClient instance.
+	 * 
+	 * @param sessionId
+	 *            Id of the session to read.
+	 * @return A session object representing the requested session, with the
+	 *         mapping of permanent to temporary identifiers restored.
 	 * @throws MainzellisteNetworkException
+	 *             If a network error occured while making the request.
 	 * @throws InvalidSessionException
+	 *             If the session does not exist anymore on the Mainzelliste
+	 *             instance.
 	 */
 	public Session readSession(String sessionId)
 			throws MainzellisteNetworkException, InvalidSessionException {
