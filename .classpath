@@ -9,11 +9,15 @@
 			<attribute name="owner.project.facets" value="jst.utility"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_07">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/samply.common.libs/httpclient-4.3.4.jar"/>
+	<classpathentry kind="lib" path="/samply.common.libs/jettison-1.1.jar"/>
+	<classpathentry kind="lib" path="/samply.common.libs/httpcore-4.3.2.jar"/>
+	<classpathentry kind="lib" path="/samply.common.libs/commons-logging-1.1.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
