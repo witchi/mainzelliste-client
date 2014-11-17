@@ -239,18 +239,10 @@ public class Session {
 		}
 	}
 
-	/**
-	 * Create a token that allows to add a new patient to the Mainzelliste.
-	 * 
-	 * @param idTypes
-	 *            Names of id types that should be created and returned. If
-	 *            null, the default id type (depends on the Mainzelliste
-	 *            configuration) is used.
-	 * @param callback
-	 */
-	public String getAddPatientToken(Set<String> idTypes, URL callback) {
-		// TODO - implement Session.getAddPatientToken
-		throw new UnsupportedOperationException();
+	public String getAddPatientToken(URL callback, String redirect) throws MainzellisteNetworkException, InvalidSessionException {
+		AddPatientToken t = new AddPatientToken();
+		t.callback(callback).redirect(redirect);
+		return getToken(t);
 	}
 
 	/**
