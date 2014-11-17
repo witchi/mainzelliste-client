@@ -177,20 +177,10 @@ public class Session {
 		if (resultIds != null)
 			t.setResultIds(resultIds);
 		t.addSearchId(id);
-		MainzellisteResponse response = this.connection.doRequest(
-				RequestMethod.POST, getSessionURI().resolve("tokens/")
-						.toString(), t.toJSON().toString());
-		if (response.getStatusCode() == 404) {
-			throw new InvalidSessionException();
-		}
-		try {
-			tempId = response.getDataJSON().getString("id");
-			tempIdById.put(id, tempId);
-			idByTempId.put(tempId, id);
-			return tempId;
-		} catch (JSONException e) {
-			throw new Error(e);
-		}
+		tempId = this.getToken(t);
+		tempIdById.put(id, tempId);
+		idByTempId.put(tempId, id);
+		return tempId;
 	}
 
 	/**
@@ -258,7 +248,7 @@ public class Session {
 	 *            configuration) is used.
 	 * @param callback
 	 */
-	public AddPatientToken getAddPatientToken(Set<String> idTypes, URL callback) {
+	public String getAddPatientToken(Set<String> idTypes, URL callback) {
 		// TODO - implement Session.getAddPatientToken
 		throw new UnsupportedOperationException();
 	}
@@ -282,6 +272,25 @@ public class Session {
 
 		EditPatientToken t = new EditPatientToken(patientToEdit);
 		t.setRedirect(redirect);
+		return this.getToken(t);
+	}
+
+	/**
+	 * Create a token with the given token data. Used by convenience functions
+	 * for particular token types.
+	 * 
+	 * @param t
+	 *            Token object with template data for the token that should be
+	 *            created.
+	 * @return
+	 * @throws MainzellisteNetworkException
+	 *             If a network error occured while making the request.
+	 * @throws InvalidSessionException
+	 *             If the session does not exist anymore on the Mainzelliste
+	 *             instance.
+	 */
+	public String getToken(Token t) throws MainzellisteNetworkException,
+			InvalidSessionException {
 		MainzellisteResponse response = this.connection.doRequest(
 				RequestMethod.POST, this.getSessionURI().resolve("tokens/")
 						.toString(), t.toJSON().toString());
@@ -296,6 +305,7 @@ public class Session {
 			throw new MainzellisteNetworkException(
 					"Request to create token returned illegal data", e);
 		}
+
 	}
 
 	/**
