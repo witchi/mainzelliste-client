@@ -239,6 +239,23 @@ public class Session {
 		}
 	}
 
+	/**
+	 * Remove temporary identifier. If a temp-id exists for the given patient,
+	 * it is removed from the internal cache and deleted on the Mainzelliste
+	 * instance by invalidating the corresponding token.
+	 * 
+	 * @throws MainzellisteNetworkException
+	 *             If a network error occured while making the request.
+	 * @throws InvalidSessionException
+	 *             If the session does not exist anymore on the Mainzelliste
+	 *             instance.
+	 */
+	public void removeTempId(ID id) throws MainzellisteNetworkException,
+			InvalidSessionException {
+		if (this.tempIdById.containsKey(id))
+			this.removeTempId(tempIdById.get(id));
+	}
+
 	public String getAddPatientToken(URL callback, String redirect) throws MainzellisteNetworkException, InvalidSessionException {
 		AddPatientToken t = new AddPatientToken();
 		t.callback(callback).redirect(redirect);
