@@ -21,13 +21,13 @@ public class EditPatientToken extends Token {
 		fieldsToEdit = new HashSet<String>();
 	}
 
-	public EditPatientToken setRedirect(String url)
+	public EditPatientToken redirect(String url)
 			throws MalformedURLException {
 		this.redirect = new URL(url);
 		return this;
 	}
 
-	public EditPatientToken setRedirect(URL url) {
+	public EditPatientToken redirect(URL url) {
 		this.redirect = url;
 		return this;
 	}

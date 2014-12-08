@@ -263,7 +263,7 @@ public class Session {
 			throws MainzellisteNetworkException, InvalidSessionException {
 
 		EditPatientToken t = new EditPatientToken(patientToEdit);
-		t.setRedirect(redirect);
+		t.redirect(redirect);
 		return this.getToken(t);
 	}
 
@@ -283,15 +283,25 @@ public class Session {
 	 */
 	public String getToken(Token t) throws MainzellisteNetworkException,
 			InvalidSessionException {
+		
+		System.out.println("TOKEN = "+t.toJSON().toString());
+		
 		MainzellisteResponse response = this.connection.doRequest(
 				RequestMethod.POST, this.getSessionURI().resolve("tokens/")
 						.toString(), t.toJSON().toString());
+		
+		System.out.println("RCODE = "+response.getStatusCode());
+		
+		System.out.println("JSON = "+response.getDataJSON().toString());
+		
 		if (response.getStatusCode() == 404)
 			throw new InvalidSessionException();
 		else if (response.getStatusCode() != 201)
 			throw MainzellisteNetworkException.fromResponse(response);
 
 		try {
+//			MOOTODO WHY is "id" null?
+//			return response.getDataJSON().getString("tokenId");
 			return response.getDataJSON().getString("id");
 		} catch (JSONException e) {
 			throw new MainzellisteNetworkException(
