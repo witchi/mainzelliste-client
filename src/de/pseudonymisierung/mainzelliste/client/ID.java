@@ -11,14 +11,23 @@ import org.codehaus.jettison.json.JSONObject;
  */
 public class ID {
 
+	/** ID type (e.g. domain in which ID is valid). */
 	private final String idType;
+	/** Value of the ID. */
 	private final String idString;
+	/**
+	 * JSON representation of this object. Used for caching the result of
+	 * {@link ID#toJSON()} in case of multiple invocations.
+	 */
 	private JSONObject json = null;
+	/**
+	 * Hash code of this object (for implementation of {@link Object#hashCode())
+	 */
 	private final int hashCode;
 
 	/**
-	 * Get the id type (in the sense of domain or namespace) of this identifier.
-	 * The id type should match one of the id types configured in the referenced
+	 * Get the ID type (in the sense of domain or namespace) of this identifier.
+	 * The ID type should match one of the ID types configured in the referenced
 	 * Mainzelliste instance.
 	 */
 	public String getIdType() {
