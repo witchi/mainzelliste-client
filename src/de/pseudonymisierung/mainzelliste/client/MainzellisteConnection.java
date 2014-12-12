@@ -25,8 +25,14 @@ import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
  */
 public class MainzellisteConnection {
 
+	/**
+	 * API version to used. This is fixed for a specific version of this
+	 * library.
+	 */
 	private static final String mainzellisteApiVersion = "2.0";
+	/** API key by which to authenticate */
 	private final String mainzellisteApiKey;
+	/** URI of Mainzelliste instance to connect to. */
 	private final URI mainzellisteURI;
 
 	private CloseableHttpClient httpClient;
@@ -39,6 +45,7 @@ public class MainzellisteConnection {
 	 * @param mainzellisteApiKey
 	 *            Api key to authenticate against the Mainzelliste instance.
 	 * @throws URISyntaxException
+	 *             If mainzellisteURI is not a valid URI.
 	 */
 	public MainzellisteConnection(String mainzellisteURI,
 			String mainzellisteApiKey) throws URISyntaxException {
@@ -56,12 +63,18 @@ public class MainzellisteConnection {
 	 * @param mainzellisteApiKey
 	 *            Api key to authenticate against the Mainzelliste instance.
 	 * @param httpClient
-	 *            A CloseableHttpClient instance.
+	 *            A CloseableHttpClient instance. All connections to the
+	 *            Mainzelliste instance are made through this object.
 	 * @throws URISyntaxException
+	 *             If mainzellisteURI is not a valid URI.
 	 */
 	public MainzellisteConnection(String mainzellisteURI,
 			String mainzellisteApiKey, CloseableHttpClient httpClient)
 			throws URISyntaxException {
+		/*
+		 * Several methods call .resolve on this.mainzellisteURI, in order for
+		 * this to work correctly, the URI has to end with "/".
+		 */
 		if (!mainzellisteURI.endsWith("/"))
 			mainzellisteURI += "/";
 		this.mainzellisteURI = new URI(mainzellisteURI);
@@ -81,6 +94,7 @@ public class MainzellisteConnection {
 	 * Create a new session on the Mainzelliste instance represented by this
 	 * object.
 	 * 
+	 * @see Session
 	 * @throws MainzellisteNetworkException
 	 *             If a network error occurs while making the request.
 	 */
@@ -105,10 +119,10 @@ public class MainzellisteConnection {
 	}
 
 	/**
-	 * Restore a session from a server. It is verified that a session with the
-	 * given session id exists on the Mainzelliste instance and all temp ids
-	 * (i.e. "readPatients" tokens that allow for reading a single patient) are
-	 * retreived by a GET request and added to the session cache.
+	 * Restore a session from a server. First, it is verified that a session
+	 * with the given session id exists on the Mainzelliste instance and all
+	 * temp ids (i.e. "readPatients" tokens that allow for reading a single
+	 * patient) are retreived by a GET request and added to the session cache.
 	 * 
 	 * This method is useful to restore sessions if session data in the calling
 	 * application is serialized. Neither {@link Session} nor
@@ -140,6 +154,8 @@ public class MainzellisteConnection {
 
 		if (response.getStatusCode() == 200) {
 			try {
+				// Read tokens as JSON and delegate to Session#setTokens for
+				// parsing
 				JSONArray tokensJSON = new JSONArray(response.getData());
 				s.setTokens(tokensJSON);
 				return s;
@@ -153,6 +169,7 @@ public class MainzellisteConnection {
 		}
 	}
 
+	/** Definition of HTTP methods */
 	public static enum RequestMethod {
 		GET, POST, PUT, DELETE;
 	}
@@ -164,9 +181,9 @@ public class MainzellisteConnection {
 	 *            The http method to use (GET, POST, PUT, DELETE).
 	 * @param path
 	 *            The resource path, either absolute or relative to the instance
-	 *            URL.
+	 *            URI.
 	 * @param data
-	 *            The data to transmit.
+	 *            The data to transmit in JSON format.
 	 * @return The response represented as an instance of
 	 *         {@link MainzellisteResponse}.
 	 * @throws MainzellisteNetworkException

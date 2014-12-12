@@ -25,16 +25,19 @@ import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
  */
 public class Session {
 
-	/**
-	 * Set to false when a session is invalidated by calling destroy().
-	 */
+	/** Set to false when a session is invalidated by calling destroy(). */
 	private boolean isValid = true;
+	/** Network requests to the Mainzelliste are made through this object */
 	private MainzellisteConnection connection;
+	/** Session id. */
 	private String sessionId;
+	/** Names of default result fields for Temp IDs */
 	private Set<String> defaultResultFields;
+	/** Default ID types for Temp IDs. */
 	private Set<String> defaultResultIds;
+	/** Cache for mapping IDs to Temp IDs. */
 	private Map<ID, String> tempIdById;
-
+	/** Cache for mapping Temp IDs to IDs. */
 	private Map<String, ID> idByTempId;
 
 	/**
@@ -58,6 +61,8 @@ public class Session {
 
 	/**
 	 * Get the id of this session.
+	 * 
+	 * @return The session id.
 	 */
 	public String getSessionId() {
 		return sessionId;
@@ -65,6 +70,8 @@ public class Session {
 
 	/**
 	 * Get the URI of this session.
+	 * 
+	 * @return The session URI.
 	 */
 	public URI getSessionURI() {
 		try {
@@ -87,10 +94,13 @@ public class Session {
 	/**
 	 * Check whether this session is valid, i.e. still exists on the
 	 * Mainzelliste instance. This is verified by a GET request on the session
-	 * URI.
+	 * URI unless the object is already internally marked as invalid.
+	 * 
+	 * @return true, if the session is valid, false otherwise.
 	 * 
 	 * @throws MainzellisteNetworkException
-	 *             If a network error occurs while making the request.
+	 *             If a network error occurs while making the request to check
+	 *             the session status.
 	 */
 	public boolean isValid() throws MainzellisteNetworkException {
 		/*
@@ -133,21 +143,29 @@ public class Session {
 	}
 
 	/**
-	 * Get a temporary identifier (temp-id). A temp-id is an identifier for a
+	 * Get a temporary identifier (Temp ID). A Temp ID is an identifier for a
 	 * patient for the duration of a session. It acts furthermore as an
 	 * authorization token to read the specified identifying data and permanent
 	 * identifiers of the patient from the Mainzelliste.
 	 * 
+	 * Temp IDs are cached so that only the first of multiple requests for the
+	 * same ID lead to a network request. This also means that the list of
+	 * fields IDs in the result (parameters (resultFields and resultIds) cannot
+	 * be changed once a Temp ID has been requested for a specific ID. In order
+	 * to issue multiple Temp IDs with different result fields or IDs for one
+	 * permanent ID within one session, {@link Session#getToken(Token)} should
+	 * be used with appropriate instances of {@link ReadPatientsToken}.
+	 * 
 	 * @param id
 	 *            A permanent identifier of a patient.
 	 * @param resultFields
-	 *            The IDAT fields that can be retreived by this temp-id. Legal
+	 *            The IDAT fields that can be retreived by this Temp ID. Legal
 	 *            values are all field names that are configured on the
 	 *            connected Mainzelliste instance.
 	 * @param resultIds
-	 *            The permanent identifiers that can be retreived by this
-	 *            temp-id. Legal values are all id types that are configured on
-	 *            the connected Mainzelliste instance.
+	 *            The permanent identifiers that can be retreived by this Temp
+	 *            ID. Legal values are all id types that are configured on the
+	 *            connected Mainzelliste instance.
 	 * @return A temporary identifier, valid as long as this session is valid,
 	 *         or null if the given permanent identifier is unknown.
 	 * @throws InvalidSessionException
@@ -170,7 +188,7 @@ public class Session {
 		if (tempId != null)
 			return tempId;
 
-		// Otherwise get temp-id from Mainzelliste and store in cache
+		// Otherwise get Temp ID from Mainzelliste and store in cache
 		ReadPatientsToken t = new ReadPatientsToken();
 		if (resultFields != null)
 			t.setResultFields(resultFields);
@@ -185,6 +203,8 @@ public class Session {
 
 	/**
 	 * Get all temporary identifiers of this session.
+	 * 
+	 * @return The set of Temp IDs.
 	 */
 	public Set<String> getTempIds() {
 		return idByTempId.keySet();
@@ -194,29 +214,31 @@ public class Session {
 	 * Get all permanent identifiers for which this session holds temporary
 	 * identifiers.
 	 * 
+	 * @return The set of IDs.
+	 * 
 	 */
 	public Set<ID> getIDs() {
 		return tempIdById.keySet();
 	}
 
 	/**
-	 * Get the corresponding permanent patient identifier for a temp-id.
+	 * Get the corresponding permanent patient identifier for a Temp ID.
 	 * 
 	 * @param tempId
 	 *            A temporary identifier.
-	 * @return The corresponding permanent identifier for which the temp-id was
-	 *         created, or null if no such temp-id exists.
+	 * @return The corresponding permanent identifier for which the Temp ID was
+	 *         created, or null if no such Temp ID exists.
 	 * @throws NullPointerException
 	 *             If tempId is null.
 	 */
 	public ID getId(String tempId) {
 		if (tempId == null)
-			throw new NullPointerException("Temp-id passed to getId is null!");
+			throw new NullPointerException("Temp ID passed to getId is null!");
 		return this.idByTempId.get(tempId);
 	}
 
 	/**
-	 * Remove temporary identifier. The temp-id is removed from the internal
+	 * Remove temporary identifier. The Temp ID is removed from the internal
 	 * cache and deleted on the Mainzelliste instance by invalidating the
 	 * corresponding token.
 	 * 
@@ -240,7 +262,7 @@ public class Session {
 	}
 
 	/**
-	 * Remove temporary identifier. If a temp-id exists for the given patient,
+	 * Remove temporary identifier. If a Temp ID exists for the given patient,
 	 * it is removed from the internal cache and deleted on the Mainzelliste
 	 * instance by invalidating the corresponding token.
 	 * 
@@ -256,7 +278,21 @@ public class Session {
 			this.removeTempId(tempIdById.get(id));
 	}
 
-	public String getAddPatientToken(URL callback, String redirect) throws MainzellisteNetworkException, InvalidSessionException {
+	/**
+	 * Utility method to get an "addPatient" Token with default ID type.
+	 * 
+	 * @param callback
+	 *            Callback URL. See {@link AddPatientToken#callback(URL)} for
+	 *            details. May be null if no callback is desired.
+	 * @param redirect
+	 *            Redirect URL. See {@link AddPatientToken#redirect(String)} for
+	 *            details. May be null if no redirect is desired.
+	 * @return The token ID as returned by the Mainzelliste.
+	 * @throws MainzellisteNetworkException
+	 * @throws InvalidSessionException
+	 */
+	public String getAddPatientToken(URL callback, String redirect)
+			throws MainzellisteNetworkException, InvalidSessionException {
 		AddPatientToken t = new AddPatientToken();
 		t.callback(callback).redirect(redirect);
 		return getToken(t);
@@ -270,6 +306,7 @@ public class Session {
 	 * @param redirect
 	 *            A redirect URL that the user should be referred to after the
 	 *            edit operation.
+	 * @return The token ID as returned by the Mainzelliste.
 	 * @throws MainzellisteNetworkException
 	 *             If a network error occured while making the request.
 	 * @throws InvalidSessionException
@@ -291,7 +328,7 @@ public class Session {
 	 * @param t
 	 *            Token object with template data for the token that should be
 	 *            created.
-	 * @return
+	 * @return The token ID as returned by the Mainzelliste.
 	 * @throws MainzellisteNetworkException
 	 *             If a network error occured while making the request.
 	 * @throws InvalidSessionException
@@ -300,25 +337,25 @@ public class Session {
 	 */
 	public String getToken(Token t) throws MainzellisteNetworkException,
 			InvalidSessionException {
-		
-		System.out.println("TOKEN = "+t.toJSON().toString());
-		
+		/* FIXME Prüfen, dann Debugmeldungen raus */
+		System.out.println("TOKEN = " + t.toJSON().toString());
+
 		MainzellisteResponse response = this.connection.doRequest(
 				RequestMethod.POST, this.getSessionURI().resolve("tokens/")
 						.toString(), t.toJSON().toString());
-		
-		System.out.println("RCODE = "+response.getStatusCode());
-		
-		System.out.println("JSON = "+response.getDataJSON().toString());
-		
+
+		System.out.println("RCODE = " + response.getStatusCode());
+
+		System.out.println("JSON = " + response.getDataJSON().toString());
+
 		if (response.getStatusCode() == 404)
 			throw new InvalidSessionException();
 		else if (response.getStatusCode() != 201)
 			throw MainzellisteNetworkException.fromResponse(response);
 
 		try {
-//			MOOTODO WHY is "id" null?
-//			return response.getDataJSON().getString("tokenId");
+			// MOOTODO WHY is "id" null?
+			// return response.getDataJSON().getString("tokenId");
 			return response.getDataJSON().getString("id");
 		} catch (JSONException e) {
 			throw new MainzellisteNetworkException(
@@ -329,6 +366,8 @@ public class Session {
 
 	/**
 	 * Get the current default fields for {@link Session#getTempId(ID)}.
+	 * 
+	 * @return Set of field names.
 	 */
 	public Set<String> getDefaultResultFields() {
 		return defaultResultFields;
@@ -346,7 +385,9 @@ public class Session {
 	}
 
 	/**
-	 * Get the current default identifiers for {@link Session#getTempId(ID)}.
+	 * Get the current default IDs for {@link Session#getTempId(ID)}.
+	 * 
+	 * @return Set of ID type names.
 	 */
 	public Set<String> getDefaultResultIds() {
 		return defaultResultIds;
@@ -368,7 +409,10 @@ public class Session {
 	 * {@link MainzellisteConnection#readSession(String)}
 	 * 
 	 * @param tokensJSON
+	 *            JSON representation of tokens, as returned by calling GET
+	 *            /sessions/{sessionid}/tokens/ on the Mainzelliste.
 	 * @throws JSONException
+	 *             If an error occurs while parsing the JSON data.
 	 */
 	void setTokens(JSONArray tokensJSON) throws JSONException {
 		for (int i = 0; i < tokensJSON.length(); i++) {
@@ -376,7 +420,7 @@ public class Session {
 			if (thisToken.getString("type").equals("readPatients")) {
 				JSONObject tokenData = thisToken.getJSONObject("data");
 				JSONArray searchIDs = tokenData.getJSONArray("searchIds");
-				// Token is considered a temp-id if only one ID is searched for
+				// Token is considered a Temp ID if only one ID is searched for
 				if (searchIDs.length() == 1) {
 					String tempId = thisToken.getString("id");
 					JSONObject idJSON = searchIDs.getJSONObject(0);

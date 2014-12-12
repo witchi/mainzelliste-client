@@ -11,17 +11,20 @@ import org.codehaus.jettison.json.JSONObject;
 import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
 
 /**
- * Encapulates the response to an http request to a Mainzelliste instance.
+ * Encapsulates the response to an http request to a Mainzelliste instance.
  * Constructed by
  * {@link MainzellisteConnection#doRequest(de.pseudonymisierung.mainzelliste.client.MainzellisteConnection.RequestMethod, String, String)
  * MainzellisteConnection#doRequest()}
  */
 class MainzellisteResponse {
 
+	/** The returned HTTP status code. */
 	private int statusCode;
 
+	/** The returned entity. */
 	private String data;
 
+	/** Create instance from an HTTP response. */
 	MainzellisteResponse(CloseableHttpResponse response)
 			throws MainzellisteNetworkException {
 		this.statusCode = response.getStatusLine().getStatusCode();
@@ -39,6 +42,8 @@ class MainzellisteResponse {
 
 	/**
 	 * Get the HTTP status code of this response.
+	 * 
+	 * @return The HTTP status code of this response.
 	 */
 	public int getStatusCode() {
 		return statusCode;
@@ -55,7 +60,12 @@ class MainzellisteResponse {
 	}
 
 	/**
-	 * Return data as JSON object.
+	 * Get data as JSON object.
+	 * 
+	 * @return Response entity as JSONObject.
+	 * 
+	 * @throws MainzellisteNetworkException
+	 *             If the response is not valid JSON.
 	 */
 	public JSONObject getDataJSON() throws MainzellisteNetworkException {
 		try {

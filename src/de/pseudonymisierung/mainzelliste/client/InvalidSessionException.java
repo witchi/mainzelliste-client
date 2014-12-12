@@ -8,4 +8,6 @@ package de.pseudonymisierung.mainzelliste.client;
  */
 public class InvalidSessionException extends Exception {
 
+	private static final long serialVersionUID = 1L;
+
 }
