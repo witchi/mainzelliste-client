@@ -62,7 +62,7 @@ public class MainzellisteConnection {
 	/**
 	 * API version to use when making requests to Mainzelliste.
 	 */
-	private static final String mainzellisteApiVersion = "2.0";
+	private static final String MAINZELLISTE_API_VERSION = "2.0";
 	/**
 	 * API key used to authenticate against Mainzelliste.
 	 */
@@ -266,7 +266,7 @@ public class MainzellisteConnection {
 		}
 
 		request.setHeader("mainzellisteApiKey", mainzellisteApiKey);
-		request.setHeader("mainzellisteApiVersion", mainzellisteApiVersion);
+		request.setHeader("MAINZELLISTE_API_VERSION", MAINZELLISTE_API_VERSION);
 		request.setHeader("Accepts", "application/json");
 
 		try {
