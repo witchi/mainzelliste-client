@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2015 Working Group on Joint Research, University Medical Center Mainz
+ * Contact: info@osse-register.de
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free 
+ * Software Foundation; either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License 
+ * along with this program; if not, see <http://www.gnu.org/licenses>.
+ *
+ * Additional permission under GNU GPL version 3 section 7:
+ *
+ * If you modify this Program, or any covered work, by linking or combining it 
+ * with Jersey (https://jersey.java.net) (or a modified version of that 
+ * library), containing parts covered by the terms of the General Public 
+ * License, version 2.0, the licensors of this Program grant you additional 
+ * permission to convey the resulting work.
+ */
 package de.pseudonymisierung.mainzelliste.client;
 
 import java.net.URL;
@@ -10,32 +35,37 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 /**
- * Represents a token of type "addPatient". This allows creation of a patient by
- * submitting IDAT to the Mainzelliste.
+ * Represents a token of type "addPatient". This token authorizes to create one
+ * new patient on the Mainzelliste.
  */
 public class AddPatientToken extends Token {
 
-	/** The id types that are created when using this token. */
-	private LinkedList<String> idTypes = new LinkedList<String>();
-	/** URL of the callback request. */
-	private URL callback = null;
-	/** URL to which the user is redirected after creating the patient. */
-	private String redirect = null;
 	/**
-	 * Field values that the Mainzelliste should store in addition to the fields
-	 * provided by the token user.
+	 * Names of id types that are created when using this token.
+	 */
+	private LinkedList<String> idTypes = new LinkedList<String>();
+	/**
+	 * Predefined fields. Map keys are field names, values the corresponding
+	 * field values.
 	 */
 	private Map<String, String> fields = new HashMap<String, String>();
+	/**
+	 * Callback URL called by Mainzelliste after creating the patient.
+	 */
+	private URL callback = null;
+	/**
+	 * URL (template string) to which to redirect the user after creating the
+	 * patient.
+	 */
+	private String redirect = null;
 
 	/**
-	 * Add an id type to the set of id types. Of this token. IDs of all defined
-	 * types are created (or existing ones returned if the patient still exists)
-	 * upon using the token.
+	 * Add an id type to the list of ids that should be created for the new
+	 * patient.
 	 * 
 	 * @param idType
-	 *            Name of an id type. Must match on of the id types defined on
-	 *            the Mainzelliste.
-	 * @return The updated object.
+	 *            Name of an id type.
+	 * @return The modified token object.
 	 */
 	public AddPatientToken addIdType(String idType) {
 		idTypes.add(idType);
@@ -43,16 +73,14 @@ public class AddPatientToken extends Token {
 	}
 
 	/**
-	 * Add a pre-defined field. Pre-defined fields are stored in addition to the
-	 * fields that the user submits upon using the token.
+	 * Add a predefined fields. Can be used to include fields that should not be
+	 * entered by the user in the request to create a patient.
 	 * 
 	 * @param fieldName
-	 *            Field name. Must match one of the fields defined on the
-	 *            Mainzelliste.
+	 *            Name of the field.
 	 * @param value
-	 *            Field value. Must match the format defined on the
-	 *            Mainzelliste.
-	 * @return The updated object.
+	 *            Value of the field.
+	 * @return The modified token object.
 	 */
 	public AddPatientToken addField(String fieldName, String value) {
 		this.fields.put(fieldName, value);
@@ -60,12 +88,12 @@ public class AddPatientToken extends Token {
 	}
 
 	/**
-	 * Add a callback URL to which the token id and the generated pseudonyms are
-	 * transmitted (see Mainzelliste API for details).
+	 * Set the URL to which Mainzelliste makes a callback request after creation
+	 * of the patient.
 	 * 
 	 * @param callback
-	 *            Callback URL.
-	 * @return The updated object.
+	 *            An URL or null if no callback is desired.
+	 * @return The modified token object.
 	 */
 	public AddPatientToken callback(URL callback) {
 		this.callback = callback;
@@ -73,13 +101,19 @@ public class AddPatientToken extends Token {
 	}
 
 	/**
-	 * Add a redirect URL to which the user
+	 * Set a URL to which the user should be redirected after creating the new
+	 * patient. The URL can include template parameters in curly braces.
+	 * Parameters can be any of the following:
+	 * <ul>
+	 * <li>The name of an id type. These parameters will be replaced with the
+	 * values of the respective created identifiers.
+	 * <li>The special parameter "tokenId". This will be replaced by the
+	 * identifier of the addPatient-Token used to execute the request.
 	 * 
 	 * @param redirect
-	 *            The redirect URL. Can include parameters of the form
-	 *            "{parameter}" that must match id types; also, "{tokenId}" can
-	 *            be used to include the token id in the URL.
-	 * @return The updated object.
+	 *            The URL template for the redirect or null if no redirect is
+	 *            desired.
+	 * @return The modified token object.
 	 */
 	public AddPatientToken redirect(String redirect) {
 		this.redirect = redirect;

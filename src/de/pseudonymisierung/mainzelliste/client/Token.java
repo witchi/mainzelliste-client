@@ -3,37 +3,37 @@ package de.pseudonymisierung.mainzelliste.client;
 import org.codehaus.jettison.json.JSONObject;
 
 /**
- * A token represents the authorization for a specific request to a Mainzelliste
- * instance, for example "create a new patient" or "get name of patient xy". It
- * is requested by the server that has access to the Mainzelliste and is usually
- * handed to other client applications (e.g. a user's web browser).
+ * Abstract representation of an authorizations token. A token authorizes to
+ * execute a specified action on a Mainzelliste instance. Typically, tokens are
+ * handed to a third party, which can then execute the respective action
+ * authorized by the token identifier alone. Depending on the token type,
+ * additional payload data can be specified (see subclasses for details).
  * 
- * This class is an abstract definition of a token, specific token types are
- * represented by its subclasses.
+ * @see Session#getToken(Token) for a general method to get Tokens from the
+ *      Mainzelliste.
  */
 public abstract class Token {
 
-	/** Unique identifier of the token. */
-	private String tokenId = null;
+	/**
+	 * Identifier of the token, unique for the respective Mainzelliste instance.
+	 */
+	private String tokenId;
 
 	/**
-	 * Get the token identifier. The identifier is created upon registering the
-	 * token on the Mainzelliste.
+	 * Get the token identifier.
 	 * 
-	 * @return The token identifier. May be null if a token has not been
-	 *         registered on a Mainzelliste.
+	 * @return The identifier of this token.
 	 */
 	public String getTokenId() {
 		return this.tokenId;
 	}
 
 	/**
-	 * Get JSON representation of this token for the purpose of making a token
-	 * request to the Mainzelliste. Subclasses have to provide a specific
-	 * implementation that conforms to the format specified by the Mainzelliste
-	 * API.
+	 * Get a JSON representation of this token in the format understood by
+	 * Mainzelliste. This does not include the token identifier, which is
+	 * assigned by Mainzelliste upon registering the token.
 	 * 
-	 * @return A JSON representation of this token.
+	 * @return The JSON representation of this token.
 	 */
 	public abstract JSONObject toJSON();
 

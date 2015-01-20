@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2015 Working Group on Joint Research, University Medical Center Mainz
+ * Contact: info@osse-register.de
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free 
+ * Software Foundation; either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License 
+ * along with this program; if not, see <http://www.gnu.org/licenses>.
+ *
+ * Additional permission under GNU GPL version 3 section 7:
+ *
+ * If you modify this Program, or any covered work, by linking or combining it 
+ * with Jersey (https://jersey.java.net) (or a modified version of that 
+ * library), containing parts covered by the terms of the General Public 
+ * License, version 2.0, the licensors of this Program grant you additional 
+ * permission to convey the resulting work.
+ */
 package de.pseudonymisierung.mainzelliste.client;
 
 import java.util.Collection;
@@ -10,31 +35,31 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 /**
- * Token that allows reading specific IDAT fields or IDs of a patient. Used to
- * implement Temp IDs.
+ * Represents a token of type "readPatients", which authorizes to retreive IDAT
+ * and/or identifers of one or multiple patients. Used for implementing
+ * temporary identifiers.
  */
 public class ReadPatientsToken extends Token {
 
-	/** IDs of the patients to read. */
-	private LinkedList<ID> searchIds;
-	/** IDAT fields that can be read with this token */
-	private Set<String> resultFields;
-	/** Types of IDs that can be read with this token */
-	private Set<String> resultIds;
-
-	/** Create an instance. */
-	public ReadPatientsToken() {
-		this.searchIds = new LinkedList<ID>();
-		this.resultFields = new HashSet<String>();
-		this.resultIds = new HashSet<String>();
-	}
+	/**
+	 * Permanent identifiers of patients whose data should be retreived.
+	 */
+	private LinkedList<ID> searchIds = new LinkedList<ID>();;
+	/**
+	 * List of names of IDAT fields that should appear in the result.
+	 */
+	private Set<String> resultFields = new HashSet<String>();;
+	/**
+	 * List of types of identifiers that should appear in the result.
+	 */
+	private Set<String> resultIds = new HashSet<String>();;
 
 	/**
-	 * Add a patient to the list of patients that can be read with this token.
+	 * Add a patient to the list of patients for which data should be retreived.
 	 * 
 	 * @param id
-	 *            An ID of the patient to add.
-	 * @return The updated object.
+	 *            Permanent identifier of a patient.
+	 * @return The modified token object.
 	 */
 	public ReadPatientsToken addSearchId(ID id) {
 		this.searchIds.add(id);
@@ -42,47 +67,22 @@ public class ReadPatientsToken extends Token {
 	}
 
 	/**
-	 * Add a field to the list of fields that appear in the result.
+	 * Get the list of fields that can be retrieved with this token.
 	 * 
-	 * @param fieldName
-	 *            Name of a field, must match a field definition on the
-	 *            Mainzelliste.
-	 * @return The updated object.
-	 */
-	public ReadPatientsToken addResultField(String fieldName) {
-		this.resultFields.add(fieldName);
-		return this;
-	}
-
-	/**
-	 * Add an ID type to the list of ID types that appear in the result.
-	 * 
-	 * @param idType
-	 *            Name of ID type. Must match an ID type definition on the
-	 *            Mainzelliste.
-	 * @return The updated object.
-	 */
-	public ReadPatientsToken addResultId(String idType) {
-		this.resultIds.add(idType);
-		return this;
-	}
-
-	/**
-	 * Get the list of fields that can be read with this token.
-	 * 
-	 * @return List of field names.
+	 * @return Set of field names. An empty set if no result fields have been
+	 *         defined.
 	 */
 	public Set<String> getResultFields() {
 		return resultFields;
 	}
 
 	/**
-	 * Set the fields that can be read with this token.
+	 * Set the list of IDAT fields that can be retrieved with this token.
 	 * 
 	 * @param resultFields
-	 *            List of field names, each of which must match a field
-	 *            definition on the Mainzelliste.
-	 * @return The updated object.
+	 *            A collection of field names. Provide an empty collection if no
+	 *            result fields are desired.
+	 * @return The modified token object.
 	 */
 	public ReadPatientsToken setResultFields(Collection<String> resultFields) {
 		this.resultFields = new HashSet<String>(resultFields);
@@ -90,24 +90,46 @@ public class ReadPatientsToken extends Token {
 	}
 
 	/**
-	 * Get the list of ID types that can be read with this token.
+	 * Add a field to the list of IDAT fields that should be retrieved.
 	 * 
-	 * @return List of ID types.
+	 * @param fieldName
+	 *            Name of a field.
+	 * @return The modified token object.
+	 */
+	public ReadPatientsToken addResultField(String fieldName) {
+		this.resultFields.add(fieldName);
+		return this;
+	}
+
+	/**
+	 * Get the list of ids that can be retrieved with this token.
+	 * 
+	 * @return Set of id type names. An empty list if none are defined.
 	 */
 	public Set<String> getResultIds() {
 		return resultIds;
 	}
 
 	/**
-	 * Set the list of ID types that can be read with this token.
+	 * Set the list of id types to include in the result.
 	 * 
 	 * @param resultIds
-	 *            List of ID types, each of which must match a ID type
-	 *            definition on the Mainzelliste.
-	 * @return The updated object.
+	 *            Collection of id type names. Provide an empty collection if no
+	 *            result ids are desired.
 	 */
-	public ReadPatientsToken setResultIds(Collection<String> resultIds) {
+	public void setResultIds(Collection<String> resultIds) {
 		this.resultIds = new HashSet<String>(resultIds);
+	}
+
+	/**
+	 * Add an id type to appear in the result.
+	 * 
+	 * @param idType
+	 *            An id type.
+	 * @return The modified token object.
+	 */
+	public ReadPatientsToken addResultId(String idType) {
+		this.resultIds.add(idType);
 		return this;
 	}
 

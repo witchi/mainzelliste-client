@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2015 Working Group on Joint Research, University Medical Center Mainz
+ * Contact: info@osse-register.de
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free 
+ * Software Foundation; either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License 
+ * along with this program; if not, see <http://www.gnu.org/licenses>.
+ *
+ * Additional permission under GNU GPL version 3 section 7:
+ *
+ * If you modify this Program, or any covered work, by linking or combining it 
+ * with Jersey (https://jersey.java.net) (or a modified version of that 
+ * library), containing parts covered by the terms of the General Public 
+ * License, version 2.0, the licensors of this Program grant you additional 
+ * permission to convey the resulting work.
+ */
 package de.pseudonymisierung.mainzelliste.client;
 
 import java.io.IOException;
@@ -11,20 +36,31 @@ import org.codehaus.jettison.json.JSONObject;
 import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
 
 /**
- * Encapsulates the response to an http request to a Mainzelliste instance.
+ * Encapsulates the response to an HTTP request to a Mainzelliste instance.
  * Constructed by
- * {@link MainzellisteConnection#doRequest(de.pseudonymisierung.mainzelliste.client.MainzellisteConnection.RequestMethod, String, String)
+ * {@link MainzellisteConnection#doRequest(de.pseudonymisierung.mainzelliste.client.MainzellisteConnection.RequestMethod, String, String)}
  * MainzellisteConnection#doRequest()}
  */
 class MainzellisteResponse {
 
-	/** The returned HTTP status code. */
-	private int statusCode;
+	/**
+	 * Returned HTTP status code.
+	 */
+	private final int statusCode;
 
-	/** The returned entity. */
-	private String data;
+	/**
+	 * Returned entity.
+	 */
+	private final String data;
 
-	/** Create instance from an HTTP response. */
+	/**
+	 * Create an instance from a HTTP response.
+	 * 
+	 * @param response
+	 *            The HTTP response.
+	 * @throws MainzellisteNetworkException
+	 *             if an IO error occurs while reading the response entity.
+	 */
 	MainzellisteResponse(CloseableHttpResponse response)
 			throws MainzellisteNetworkException {
 		this.statusCode = response.getStatusLine().getStatusCode();
@@ -60,12 +96,11 @@ class MainzellisteResponse {
 	}
 
 	/**
-	 * Get data as JSON object.
+	 * Return response entity as a JSON object.
 	 * 
-	 * @return Response entity as JSONObject.
-	 * 
+	 * @return The returned entity.
 	 * @throws MainzellisteNetworkException
-	 *             If the response is not valid JSON.
+	 *             if the response entity cannot be parsed to a JSON object.
 	 */
 	public JSONObject getDataJSON() throws MainzellisteNetworkException {
 		try {

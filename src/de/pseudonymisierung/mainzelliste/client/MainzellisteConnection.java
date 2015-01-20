@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2015 Working Group on Joint Research, University Medical Center Mainz
+ * Contact: info@osse-register.de
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free 
+ * Software Foundation; either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License 
+ * along with this program; if not, see <http://www.gnu.org/licenses>.
+ *
+ * Additional permission under GNU GPL version 3 section 7:
+ *
+ * If you modify this Program, or any covered work, by linking or combining it 
+ * with Jersey (https://jersey.java.net) (or a modified version of that 
+ * library), containing parts covered by the terms of the General Public 
+ * License, version 2.0, the licensors of this Program grant you additional 
+ * permission to convey the resulting work.
+ */
 package de.pseudonymisierung.mainzelliste.client;
 
 import java.net.URI;
@@ -26,16 +51,31 @@ import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
 public class MainzellisteConnection {
 
 	/**
-	 * API version to used. This is fixed for a specific version of this
-	 * library.
+	 * Representation of HTTP methods.
+	 */
+	@SuppressWarnings("javadoc")
+	// GET, POST etc. are self-explanatory
+	public static enum RequestMethod {
+		GET, POST, PUT, DELETE;
+	}
+
+	/**
+	 * API version to use when making requests to Mainzelliste.
 	 */
 	private static final String mainzellisteApiVersion = "2.0";
-	/** API key by which to authenticate */
+	/**
+	 * API key used to authenticate against Mainzelliste.
+	 */
 	private final String mainzellisteApiKey;
-	/** URI of Mainzelliste instance to connect to. */
+	/**
+	 * URI of the Mainzelliste instance to make requests to.
+	 */
 	private final URI mainzellisteURI;
 
-	private CloseableHttpClient httpClient;
+	/**
+	 * HTTP client through which requests to Mainzelliste are made.
+	 */
+	private final CloseableHttpClient httpClient;
 
 	/**
 	 * Initialize connection to Mainzelliste with default Http client.
@@ -43,9 +83,10 @@ public class MainzellisteConnection {
 	 * @param mainzellisteURI
 	 *            Base URL of the Mainzelliste instance.
 	 * @param mainzellisteApiKey
-	 *            Api key to authenticate against the Mainzelliste instance.
+	 *            API key used to authenticate against the Mainzelliste
+	 *            instance.
 	 * @throws URISyntaxException
-	 *             If mainzellisteURI is not a valid URI.
+	 *             if mainzellisteURI is not a syntactically valid URI.
 	 */
 	public MainzellisteConnection(String mainzellisteURI,
 			String mainzellisteApiKey) throws URISyntaxException {
@@ -63,18 +104,13 @@ public class MainzellisteConnection {
 	 * @param mainzellisteApiKey
 	 *            Api key to authenticate against the Mainzelliste instance.
 	 * @param httpClient
-	 *            A CloseableHttpClient instance. All connections to the
-	 *            Mainzelliste instance are made through this object.
+	 *            A CloseableHttpClient instance.
 	 * @throws URISyntaxException
-	 *             If mainzellisteURI is not a valid URI.
+	 *             if mainzellisteURI is not a syntactically valid URI.
 	 */
 	public MainzellisteConnection(String mainzellisteURI,
 			String mainzellisteApiKey, CloseableHttpClient httpClient)
 			throws URISyntaxException {
-		/*
-		 * Several methods call .resolve on this.mainzellisteURI, in order for
-		 * this to work correctly, the URI has to end with "/".
-		 */
 		if (!mainzellisteURI.endsWith("/"))
 			mainzellisteURI += "/";
 		this.mainzellisteURI = new URI(mainzellisteURI);
@@ -83,7 +119,9 @@ public class MainzellisteConnection {
 	}
 
 	/**
-	 * Get the URL of this Mainzelliste instance.
+	 * Get the URI of this Mainzelliste instance.
+	 * 
+	 * @return The URI of this Mainzelliste instance.
 	 * 
 	 */
 	public URI getMainzellisteURI() {
@@ -94,7 +132,8 @@ public class MainzellisteConnection {
 	 * Create a new session on the Mainzelliste instance represented by this
 	 * object.
 	 * 
-	 * @see Session
+	 * @return The created session.
+	 * 
 	 * @throws MainzellisteNetworkException
 	 *             If a network error occurs while making the request.
 	 */
@@ -119,10 +158,10 @@ public class MainzellisteConnection {
 	}
 
 	/**
-	 * Restore a session from a server. First, it is verified that a session
-	 * with the given session id exists on the Mainzelliste instance and all
-	 * temp ids (i.e. "readPatients" tokens that allow for reading a single
-	 * patient) are retreived by a GET request and added to the session cache.
+	 * Restore a session from a server. It is verified that a session with the
+	 * given session id exists on the Mainzelliste instance and all temp ids
+	 * (i.e. "readPatients" tokens that allow for reading a single patient) are
+	 * retreived by a GET request and added to the session cache.
 	 * 
 	 * This method is useful to restore sessions if session data in the calling
 	 * application is serialized. Neither {@link Session} nor
@@ -154,8 +193,6 @@ public class MainzellisteConnection {
 
 		if (response.getStatusCode() == 200) {
 			try {
-				// Read tokens as JSON and delegate to Session#setTokens for
-				// parsing
 				JSONArray tokensJSON = new JSONArray(response.getData());
 				s.setTokens(tokensJSON);
 				return s;
@@ -169,11 +206,6 @@ public class MainzellisteConnection {
 		}
 	}
 
-	/** Definition of HTTP methods */
-	public static enum RequestMethod {
-		GET, POST, PUT, DELETE;
-	}
-
 	/**
 	 * Utility method to make requests to this Mainzelliste instance.
 	 * 
@@ -181,9 +213,9 @@ public class MainzellisteConnection {
 	 *            The http method to use (GET, POST, PUT, DELETE).
 	 * @param path
 	 *            The resource path, either absolute or relative to the instance
-	 *            URI.
+	 *            URL.
 	 * @param data
-	 *            The data to transmit in JSON format.
+	 *            The data to transmit.
 	 * @return The response represented as an instance of
 	 *         {@link MainzellisteResponse}.
 	 * @throws MainzellisteNetworkException

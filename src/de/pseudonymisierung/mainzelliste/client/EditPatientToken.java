@@ -1,3 +1,28 @@
+/*
+ * Copyright (C) 2015 Working Group on Joint Research, University Medical Center Mainz
+ * Contact: info@osse-register.de
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free 
+ * Software Foundation; either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT 
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License 
+ * along with this program; if not, see <http://www.gnu.org/licenses>.
+ *
+ * Additional permission under GNU GPL version 3 section 7:
+ *
+ * If you modify this Program, or any covered work, by linking or combining it 
+ * with Jersey (https://jersey.java.net) (or a modified version of that 
+ * library), containing parts covered by the terms of the General Public 
+ * License, version 2.0, the licensors of this Program grant you additional 
+ * permission to convey the resulting work.
+ */
 package de.pseudonymisierung.mainzelliste.client;
 
 import java.net.MalformedURLException;
@@ -11,23 +36,30 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 /**
- * Token that authorizes to edit IDAT fields of a patient.
+ * Represents a token of type "editPatient", which allows for changing a
+ * patient's IDAT.
  */
 public class EditPatientToken extends Token {
 
-	/** ID of the patient that can be edited. */
+	/**
+	 * A permanent identifier of the patient that can be edited with this token.
+	 */
 	private ID patientId;
-	/** Redirect URL */
-	private URL redirect;
-	/** Names of fields that can be edited (null means "all fields"). */
+	/**
+	 * The fields that can be edited by using this token (null means: all
+	 * fields).
+	 */
 	private Set<String> fieldsToEdit;
+	/**
+	 * A URL to redirect the user to after the edit operation.
+	 */
+	private URL redirect;
 
 	/**
-	 * Create an instance. As an "editPatient" token is always related to a
-	 * specific patient, this is the only allowed constructor.
+	 * Create a token for editing the patient identified by patientId.
 	 * 
 	 * @param patientId
-	 *            ID of the patient that can be edited with this token.
+	 *            Permanent identifier of a patient.
 	 */
 	public EditPatientToken(ID patientId) {
 		this.patientId = patientId;
@@ -35,14 +67,26 @@ public class EditPatientToken extends Token {
 	}
 
 	/**
-	 * Set a URL to which the user is redirected after using the token.
+	 * Set the fields that can be edited by using this token.
+	 * 
+	 * @param fieldNames
+	 *            Collection of field names or null if all fields should be
+	 *            editable.
+	 * @return The modified token object.
+	 */
+	public EditPatientToken setFieldsToEdit(Collection<String> fieldNames) {
+		this.fieldsToEdit = new HashSet<String>(fieldNames);
+		return this;
+	}
+
+	/**
+	 * Set a URL to redirect the user to after the edit operation.
 	 * 
 	 * @param url
-	 *            The URL to redirect to. Typically a web page on the MDAT
-	 *            server.
-	 * @return The updated object.
+	 *            The redirect URL or null if no redirect is desired.
+	 * @return The modified token object.
 	 * @throws MalformedURLException
-	 *             If url is not a valid URL.
+	 *             if url is not a syntactically valid URL.
 	 */
 	public EditPatientToken redirect(String url) throws MalformedURLException {
 		this.redirect = new URL(url);
@@ -50,29 +94,14 @@ public class EditPatientToken extends Token {
 	}
 
 	/**
-	 * Set a URL to which the user is redirected after using the token.
+	 * Set a URL to redirect the user to after the edit operation.
 	 * 
 	 * @param url
-	 *            The URL to redirect to. Typically a web page on the MDAT
-	 *            server.
-	 * @return The updated object.
+	 *            The redirect url or null if no redirect is desired.
+	 * @return The modified token object.
 	 */
 	public EditPatientToken redirect(URL url) {
 		this.redirect = url;
-		return this;
-	}
-
-	/**
-	 * Set the fields that can be edited with this token.
-	 * 
-	 * @param fieldNames
-	 *            A list of field names that match the field definitions on the
-	 *            Mainzelliste or null, which means that all fields can be
-	 *            edited.
-	 * @return The updated object.
-	 */
-	public EditPatientToken setFieldsToEdit(Collection<String> fieldNames) {
-		this.fieldsToEdit = new HashSet<String>(fieldNames);
 		return this;
 	}
 
