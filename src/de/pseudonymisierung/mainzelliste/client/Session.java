@@ -281,7 +281,12 @@ public class Session {
 	 */
 	public void removeTempId(String tempId)
 			throws MainzellisteNetworkException, InvalidSessionException {
-		ID idToDelete = this.idByTempId.remove(tempId);
+		/*
+		 * Keep mapping temp-id -> id. Avoids errors when temp-ids are used in
+		 * URLs and a stale temp-id appears because the user uses the "back"
+		 * button.
+		 */
+		ID idToDelete = this.idByTempId.get(tempId);
 		if (idToDelete != null)
 			this.tempIdById.remove(idToDelete);
 		MainzellisteResponse response = this.connection.doRequest(
