@@ -53,12 +53,12 @@ public class Session {
 	/**
 	 * Identifier of this session.
 	 */
-	private final String sessionId;
+	private final String id;
 	/**
 	 * Whether this session has been invalidated by a call to
 	 * {@link Session#destroy()}.
 	 */
-	private boolean isValid = true;
+	private boolean invalidated = false;
 	/**
 	 * Connection to the Mainzelliste on which this session exists.
 	 */
@@ -93,14 +93,14 @@ public class Session {
 	 * Create a session with the specified ID and MainzellisteConnector. Used
 	 * internally only by {@link MainzellisteConnection#createSession()}.
 	 * 
-	 * @param sessionId
+	 * @param id
 	 *            The session id as returned by the Mainzelliste.
 	 * @param connection
 	 *            A MainzellisteConnections object that represents the instance
 	 *            on which this session was created.
 	 */
-	Session(String sessionId, MainzellisteConnection connection) {
-		this.sessionId = sessionId;
+	Session(String id, MainzellisteConnection connection) {
+		this.id = id;
 		this.connection = connection;
 		this.defaultResultFields = null;
 		this.defaultResultIds = null;
@@ -113,8 +113,8 @@ public class Session {
 	 * 
 	 * @return The identifier of this session object.
 	 */
-	public String getSessionId() {
-		return sessionId;
+	public String getId() {
+		return id;
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class Session {
 	 * 
 	 * @return The URI of this session object.
 	 */
-	public URI getSessionURI() {
+	public URI getURI() {
 		try {
 			/*
 			 * The trailing slash is important so that further .resolve calls
@@ -130,7 +130,7 @@ public class Session {
 			 * would be removed).
 			 */
 			return connection.getMainzellisteURI().resolve("sessions/")
-					.resolve(sessionId + "/");
+					.resolve(id + "/");
 		} catch (Exception e) { // URISyntaxException, MalformedURLException
 			/*
 			 * If an invalid URL is constructed here, something is serioursly
@@ -155,10 +155,10 @@ public class Session {
 		 * Check internal flag first in order to avoid network access if this
 		 * session was invalidated by calling destroy().
 		 */
-		if (!this.isValid)
+		if (this.invalidated)
 			return false;
 		MainzellisteResponse response = this.connection.doRequest(
-				RequestMethod.GET, this.getSessionURI().toString(), null);
+				RequestMethod.GET, this.getURI().toString(), null);
 		return (response.getStatusCode() == 200);
 	}
 
@@ -315,7 +315,7 @@ public class Session {
 		if (idToDelete != null)
 			this.tempIdById.remove(idToDelete);
 		MainzellisteResponse response = this.connection.doRequest(
-				RequestMethod.DELETE, getSessionURI().resolve("tokens/")
+				RequestMethod.DELETE, getURI().resolve("tokens/")
 						.resolve(tempId).toString(), null);
 		if (response.getStatusCode() == 404) {
 			throw new InvalidSessionException();
@@ -438,7 +438,7 @@ public class Session {
 		System.out.println("TOKEN = " + t.toJSON().toString());
 
 		MainzellisteResponse response = this.connection.doRequest(
-				RequestMethod.POST, this.getSessionURI().resolve("tokens/")
+				RequestMethod.POST, this.getURI().resolve("tokens/")
 						.toString(), t.toJSON().toString());
 
 		System.out.println("RCODE = " + response.getStatusCode());
@@ -469,9 +469,9 @@ public class Session {
 	 *             If a network error occurs while making the request.
 	 */
 	public void destroy() throws MainzellisteNetworkException {
-		this.connection.doRequest(RequestMethod.DELETE, this.getSessionURI()
+		this.connection.doRequest(RequestMethod.DELETE, this.getURI()
 				.toString(), null);
-		this.isValid = false;
+		this.invalidated = true;
 	}
 
 	/**

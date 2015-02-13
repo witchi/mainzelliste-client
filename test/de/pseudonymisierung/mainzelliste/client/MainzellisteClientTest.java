@@ -39,7 +39,7 @@ public class MainzellisteClientTest {
 			ids.put(s.getTempId(thisId), thisId);
 		}
 
-		Session s2 = con2.readSession(s.getSessionId());
+		Session s2 = con2.readSession(s.getId());
 		assertEquals("Restored session contains different temp ids",
 				s.getTempIds(), s2.getTempIds());
 
