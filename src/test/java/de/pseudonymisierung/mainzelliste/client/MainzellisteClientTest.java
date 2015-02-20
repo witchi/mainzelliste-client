@@ -16,6 +16,7 @@ public class MainzellisteClientTest {
 	private MainzellisteConnection con2;
 	private final String testIds[] = { "1", "4", "5", "6", "10" };
 	private final String defaultIdType = "intid";
+	@SuppressWarnings("unused")
 	private final String defaultFields[] = { "vorname", "nachname" };
 
 	@Before
