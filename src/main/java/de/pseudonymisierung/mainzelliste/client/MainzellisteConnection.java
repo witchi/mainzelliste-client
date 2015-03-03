@@ -46,8 +46,6 @@ public class MainzellisteConnection {
 	/**
 	 * Representation of HTTP methods.
 	 */
-	@SuppressWarnings("javadoc")
-	// GET, POST etc. are self-explanatory
 	public static enum RequestMethod {
 		GET, POST, PUT, DELETE;
 	}
