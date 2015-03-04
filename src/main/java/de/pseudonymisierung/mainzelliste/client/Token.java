@@ -39,27 +39,27 @@ import org.codehaus.jettison.json.JSONObject;
  */
 public abstract class Token {
 
-	/**
-	 * Identifier of the token, unique for the respective Mainzelliste instance.
-	 */
-	private String tokenId;
+    /**
+     * Identifier of the token, unique for the respective Mainzelliste instance.
+     */
+    private String tokenId;
 
-	/**
-	 * Get the token identifier.
-	 * 
-	 * @return The identifier of this token.
-	 */
-	public String getTokenId() {
-		return this.tokenId;
-	}
+    /**
+     * Get the token identifier.
+     * 
+     * @return The identifier of this token.
+     */
+    public String getTokenId() {
+        return this.tokenId;
+    }
 
-	/**
-	 * Get a JSON representation of this token in the format understood by
-	 * Mainzelliste. This does not include the token identifier, which is
-	 * assigned by Mainzelliste upon registering the token.
-	 * 
-	 * @return The JSON representation of this token.
-	 */
-	public abstract JSONObject toJSON();
+    /**
+     * Get a JSON representation of this token in the format understood by
+     * Mainzelliste. This does not include the token identifier, which is
+     * assigned by Mainzelliste upon registering the token.
+     * 
+     * @return The JSON representation of this token.
+     */
+    public abstract JSONObject toJSON();
 
 }

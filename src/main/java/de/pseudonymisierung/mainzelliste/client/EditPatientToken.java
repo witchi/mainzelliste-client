@@ -41,91 +41,91 @@ import org.codehaus.jettison.json.JSONObject;
  */
 public class EditPatientToken extends Token {
 
-	/**
-	 * A permanent identifier of the patient that can be edited with this token.
-	 */
-	private ID patientId;
-	/**
-	 * The fields that can be edited by using this token (null means: all
-	 * fields).
-	 */
-	private Set<String> fieldsToEdit;
-	/**
-	 * A URL to redirect the user to after the edit operation.
-	 */
-	private URL redirect;
+    /**
+     * A permanent identifier of the patient that can be edited with this token.
+     */
+    private ID patientId;
+    /**
+     * The fields that can be edited by using this token (null means: all
+     * fields).
+     */
+    private Set<String> fieldsToEdit;
+    /**
+     * A URL to redirect the user to after the edit operation.
+     */
+    private URL redirect;
 
-	/**
-	 * Create a token for editing the patient identified by patientId.
-	 * 
-	 * @param patientId
-	 *            Permanent identifier of a patient.
-	 */
-	public EditPatientToken(ID patientId) {
-		this.patientId = patientId;
-		fieldsToEdit = new HashSet<String>();
-	}
+    /**
+     * Create a token for editing the patient identified by patientId.
+     * 
+     * @param patientId
+     *            Permanent identifier of a patient.
+     */
+    public EditPatientToken(ID patientId) {
+        this.patientId = patientId;
+        fieldsToEdit = new HashSet<String>();
+    }
 
-	/**
-	 * Set the fields that can be edited by using this token.
-	 * 
-	 * @param fieldNames
-	 *            Collection of field names or null if all fields should be
-	 *            editable.
-	 * @return The modified token object.
-	 */
-	public EditPatientToken setFieldsToEdit(Collection<String> fieldNames) {
-		this.fieldsToEdit = new HashSet<String>(fieldNames);
-		return this;
-	}
+    /**
+     * Set the fields that can be edited by using this token.
+     * 
+     * @param fieldNames
+     *            Collection of field names or null if all fields should be
+     *            editable.
+     * @return The modified token object.
+     */
+    public EditPatientToken setFieldsToEdit(Collection<String> fieldNames) {
+        this.fieldsToEdit = new HashSet<String>(fieldNames);
+        return this;
+    }
 
-	/**
-	 * Set a URL to redirect the user to after the edit operation.
-	 * 
-	 * @param url
-	 *            The redirect URL or null if no redirect is desired.
-	 * @return The modified token object.
-	 * @throws MalformedURLException
-	 *             if url is not a syntactically valid URL.
-	 */
-	public EditPatientToken redirect(String url) throws MalformedURLException {
-		this.redirect = new URL(url);
-		return this;
-	}
+    /**
+     * Set a URL to redirect the user to after the edit operation.
+     * 
+     * @param url
+     *            The redirect URL or null if no redirect is desired.
+     * @return The modified token object.
+     * @throws MalformedURLException
+     *             if url is not a syntactically valid URL.
+     */
+    public EditPatientToken redirect(String url) throws MalformedURLException {
+        this.redirect = new URL(url);
+        return this;
+    }
 
-	/**
-	 * Set a URL to redirect the user to after the edit operation.
-	 * 
-	 * @param url
-	 *            The redirect url or null if no redirect is desired.
-	 * @return The modified token object.
-	 */
-	public EditPatientToken redirect(URL url) {
-		this.redirect = url;
-		return this;
-	}
+    /**
+     * Set a URL to redirect the user to after the edit operation.
+     * 
+     * @param url
+     *            The redirect url or null if no redirect is desired.
+     * @return The modified token object.
+     */
+    public EditPatientToken redirect(URL url) {
+        this.redirect = url;
+        return this;
+    }
 
-	@Override
-	public JSONObject toJSON() {
-		try {
-			JSONObject result = new JSONObject();
-			result.put("type", "editPatient");
-			JSONObject data = new JSONObject();
-			data.put("patientId", this.patientId.toJSON());
-			if (this.redirect != null)
-				data.put("redirect", redirect.toString());
-			if (this.fieldsToEdit.size() > 0) {
-				JSONArray fieldsToEditJSON = new JSONArray();
-				for (String s : fieldsToEdit) {
-					fieldsToEditJSON.put(s);
-				}
-				data.put("fields", fieldsToEditJSON);
-			}
-			result.put("data", data);
-			return result;
-		} catch (JSONException e) {
-			throw new Error(e);
-		}
-	}
+    @Override
+    public JSONObject toJSON() {
+        try {
+            JSONObject result = new JSONObject();
+            result.put("type", "editPatient");
+            JSONObject data = new JSONObject();
+            data.put("patientId", this.patientId.toJSON());
+            if (this.redirect != null)
+                data.put("redirect", redirect.toString());
+            if (this.fieldsToEdit.size() > 0) {
+                JSONArray fieldsToEditJSON = new JSONArray();
+                for (String s : fieldsToEdit) {
+                    fieldsToEditJSON.put(s);
+                }
+                data.put("fields", fieldsToEditJSON);
+            }
+            result.put("data", data);
+            return result;
+        } catch (JSONException e) {
+            throw new Error(e);
+        }
+    }
 
 }

@@ -40,108 +40,108 @@ import org.codehaus.jettison.json.JSONObject;
  */
 public class AddPatientToken extends Token {
 
-	/**
-	 * Names of id types that are created when using this token.
-	 */
-	private LinkedList<String> idTypes = new LinkedList<String>();
-	/**
-	 * Predefined fields. Map keys are field names, values the corresponding
-	 * field values.
-	 */
-	private Map<String, String> fields = new HashMap<String, String>();
-	/**
-	 * Callback URL called by Mainzelliste after creating the patient.
-	 */
-	private URL callback = null;
-	/**
-	 * URL (template string) to which to redirect the user after creating the
-	 * patient.
-	 */
-	private String redirect = null;
+    /**
+     * Names of id types that are created when using this token.
+     */
+    private LinkedList<String> idTypes = new LinkedList<String>();
+    /**
+     * Predefined fields. Map keys are field names, values the corresponding
+     * field values.
+     */
+    private Map<String, String> fields = new HashMap<String, String>();
+    /**
+     * Callback URL called by Mainzelliste after creating the patient.
+     */
+    private URL callback = null;
+    /**
+     * URL (template string) to which to redirect the user after creating the
+     * patient.
+     */
+    private String redirect = null;
 
-	/**
-	 * Add an id type to the list of ids that should be created for the new
-	 * patient.
-	 * 
-	 * @param idType
-	 *            Name of an id type.
-	 * @return The modified token object.
-	 */
-	public AddPatientToken addIdType(String idType) {
-		idTypes.add(idType);
-		return this;
-	}
+    /**
+     * Add an id type to the list of ids that should be created for the new
+     * patient.
+     * 
+     * @param idType
+     *            Name of an id type.
+     * @return The modified token object.
+     */
+    public AddPatientToken addIdType(String idType) {
+        idTypes.add(idType);
+        return this;
+    }
 
-	/**
-	 * Add a predefined fields. Can be used to include fields that should not be
-	 * entered by the user in the request to create a patient.
-	 * 
-	 * @param fieldName
-	 *            Name of the field.
-	 * @param value
-	 *            Value of the field.
-	 * @return The modified token object.
-	 */
-	public AddPatientToken addField(String fieldName, String value) {
-		this.fields.put(fieldName, value);
-		return this;
-	}
+    /**
+     * Add a predefined fields. Can be used to include fields that should not be
+     * entered by the user in the request to create a patient.
+     * 
+     * @param fieldName
+     *            Name of the field.
+     * @param value
+     *            Value of the field.
+     * @return The modified token object.
+     */
+    public AddPatientToken addField(String fieldName, String value) {
+        this.fields.put(fieldName, value);
+        return this;
+    }
 
-	/**
-	 * Set the URL to which Mainzelliste makes a callback request after creation
-	 * of the patient.
-	 * 
-	 * @param callback
-	 *            An URL or null if no callback is desired.
-	 * @return The modified token object.
-	 */
-	public AddPatientToken callback(URL callback) {
-		this.callback = callback;
-		return this;
-	}
+    /**
+     * Set the URL to which Mainzelliste makes a callback request after creation
+     * of the patient.
+     * 
+     * @param callback
+     *            An URL or null if no callback is desired.
+     * @return The modified token object.
+     */
+    public AddPatientToken callback(URL callback) {
+        this.callback = callback;
+        return this;
+    }
 
-	/**
-	 * Set a URL to which the user should be redirected after creating the new
-	 * patient. The URL can include template parameters in curly braces.
-	 * Parameters can be any of the following:
-	 * <ul>
-	 * <li>The name of an id type. These parameters will be replaced with the
-	 * values of the respective created identifiers.
-	 * <li>The special parameter "tokenId". This will be replaced by the
-	 * identifier of the addPatient-Token used to execute the request.
-	 * 
-	 * @param redirect
-	 *            The URL template for the redirect or null if no redirect is
-	 *            desired.
-	 * @return The modified token object.
-	 */
-	public AddPatientToken redirect(String redirect) {
-		this.redirect = redirect;
-		return this;
-	}
+    /**
+     * Set a URL to which the user should be redirected after creating the new
+     * patient. The URL can include template parameters in curly braces.
+     * Parameters can be any of the following:
+     * <ul>
+     * <li>The name of an id type. These parameters will be replaced with the
+     * values of the respective created identifiers.
+     * <li>The special parameter "tokenId". This will be replaced by the
+     * identifier of the addPatient-Token used to execute the request.
+     * 
+     * @param redirect
+     *            The URL template for the redirect or null if no redirect is
+     *            desired.
+     * @return The modified token object.
+     */
+    public AddPatientToken redirect(String redirect) {
+        this.redirect = redirect;
+        return this;
+    }
 
-	@Override
-	public JSONObject toJSON() {
-		try {
-			JSONObject token = new JSONObject();
-			token.put("type", "addPatient");
-			JSONObject data = new JSONObject();
-			data.put("callback", this.callback);
-			data.put("redirect", this.redirect);
+    @Override
+    public JSONObject toJSON() {
+        try {
+            JSONObject token = new JSONObject();
+            token.put("type", "addPatient");
+            JSONObject data = new JSONObject();
+            data.put("callback", this.callback);
+            data.put("redirect", this.redirect);
 
-			if (this.idTypes.size() > 0) {
-				JSONArray idTypes = new JSONArray();
-				for (String thisIdType : this.idTypes) {
-					idTypes.put(thisIdType);
-				}
-				data.put("idTypes", idTypes);
-			}
+            if (this.idTypes.size() > 0) {
+                JSONArray idTypes = new JSONArray();
+                for (String thisIdType : this.idTypes) {
+                    idTypes.put(thisIdType);
+                }
+                data.put("idTypes", idTypes);
+            }
 
-			token.put("data", data);
-			return token;
-		} catch (JSONException e) {
-			throw new Error(e);
-		}
-	}
+            token.put("data", data);
+            return token;
+        } catch (JSONException e) {
+            throw new Error(e);
+        }
+    }
 
 }

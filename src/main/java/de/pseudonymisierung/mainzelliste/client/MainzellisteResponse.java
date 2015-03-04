@@ -43,71 +43,68 @@ import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
  */
 class MainzellisteResponse {
 
-	/**
-	 * Returned HTTP status code.
-	 */
-	private final int statusCode;
+    /**
+     * Returned HTTP status code.
+     */
+    private final int statusCode;
 
-	/**
-	 * Returned entity.
-	 */
-	private final String data;
+    /**
+     * Returned entity.
+     */
+    private final String data;
 
-	/**
-	 * Create an instance from a HTTP response.
-	 * 
-	 * @param response
-	 *            The HTTP response.
-	 * @throws MainzellisteNetworkException
-	 *             if an IO error occurs while reading the response entity.
-	 */
-	MainzellisteResponse(CloseableHttpResponse response)
-			throws MainzellisteNetworkException {
-		this.statusCode = response.getStatusLine().getStatusCode();
-		try {
-			HttpEntity entity = response.getEntity();
-			if (entity != null)
-				data = EntityUtils.toString(response.getEntity());
-			else
-				data = "";
-		} catch (IOException e) {
-			throw new MainzellisteNetworkException(
-					"IO error while reading response from Mainzelliste", e);
-		}
-	}
+    /**
+     * Create an instance from a HTTP response.
+     * 
+     * @param response
+     *            The HTTP response.
+     * @throws MainzellisteNetworkException
+     *             if an IO error occurs while reading the response entity.
+     */
+    MainzellisteResponse(CloseableHttpResponse response) throws MainzellisteNetworkException {
+        this.statusCode = response.getStatusLine().getStatusCode();
+        try {
+            HttpEntity entity = response.getEntity();
+            if (entity != null)
+                data = EntityUtils.toString(response.getEntity());
+            else
+                data = "";
+        } catch (IOException e) {
+            throw new MainzellisteNetworkException("IO error while reading response from Mainzelliste", e);
+        }
+    }
 
-	/**
-	 * Get the HTTP status code of this response.
-	 * 
-	 * @return The HTTP status code of this response.
-	 */
-	public int getStatusCode() {
-		return statusCode;
-	}
+    /**
+     * Get the HTTP status code of this response.
+     * 
+     * @return The HTTP status code of this response.
+     */
+    public int getStatusCode() {
+        return statusCode;
+    }
 
-	/**
-	 * Get the returned entity.
-	 * 
-	 * @return The returned entity. If the response does not contain an entity,
-	 *         an empty String.
-	 */
-	public String getData() {
-		return data;
-	}
+    /**
+     * Get the returned entity.
+     * 
+     * @return The returned entity. If the response does not contain an entity,
+     *         an empty String.
+     */
+    public String getData() {
+        return data;
+    }
 
-	/**
-	 * Return response entity as a JSON object.
-	 * 
-	 * @return The returned entity.
-	 * @throws MainzellisteNetworkException
-	 *             if the response entity cannot be parsed to a JSON object.
-	 */
-	public JSONObject getDataJSON() throws MainzellisteNetworkException {
-		try {
-			return new JSONObject(this.data);
-		} catch (JSONException e) {
-			throw new MainzellisteNetworkException(
-					"Error while parsing response from Mainzelliste", e);
-		}
-	}
+    /**
+     * Return response entity as a JSON object.
+     * 
+     * @return The returned entity.
+     * @throws MainzellisteNetworkException
+     *             if the response entity cannot be parsed to a JSON object.
+     */
+    public JSONObject getDataJSON() throws MainzellisteNetworkException {
+        try {
+            return new JSONObject(this.data);
+        } catch (JSONException e) {
+            throw new MainzellisteNetworkException("Error while parsing response from Mainzelliste", e);
+        }
+    }
 }
