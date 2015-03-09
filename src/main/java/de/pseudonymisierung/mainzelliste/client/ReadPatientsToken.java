@@ -41,114 +41,114 @@ import org.codehaus.jettison.json.JSONObject;
  */
 public class ReadPatientsToken extends Token {
 
-	/**
-	 * Permanent identifiers of patients whose data should be retreived.
-	 */
-	private LinkedList<ID> searchIds = new LinkedList<ID>();;
-	/**
-	 * List of names of IDAT fields that should appear in the result.
-	 */
-	private Set<String> resultFields = new HashSet<String>();;
-	/**
-	 * List of types of identifiers that should appear in the result.
-	 */
-	private Set<String> resultIds = new HashSet<String>();;
+    /**
+     * Permanent identifiers of patients whose data should be retreived.
+     */
+    private LinkedList<ID> searchIds = new LinkedList<ID>();;
+    /**
+     * List of names of IDAT fields that should appear in the result.
+     */
+    private Set<String> resultFields = new HashSet<String>();;
+    /**
+     * List of types of identifiers that should appear in the result.
+     */
+    private Set<String> resultIds = new HashSet<String>();;
 
-	/**
-	 * Add a patient to the list of patients for which data should be retreived.
-	 * 
-	 * @param id
-	 *            Permanent identifier of a patient.
-	 * @return The modified token object.
-	 */
-	public ReadPatientsToken addSearchId(ID id) {
-		this.searchIds.add(id);
-		return this;
-	}
+    /**
+     * Add a patient to the list of patients for which data should be retreived.
+     * 
+     * @param id
+     *            Permanent identifier of a patient.
+     * @return The modified token object.
+     */
+    public ReadPatientsToken addSearchId(ID id) {
+        this.searchIds.add(id);
+        return this;
+    }
 
-	/**
-	 * Get the list of fields that can be retrieved with this token.
-	 * 
-	 * @return Set of field names. An empty set if no result fields have been
-	 *         defined.
-	 */
-	public Set<String> getResultFields() {
-		return resultFields;
-	}
+    /**
+     * Get the list of fields that can be retrieved with this token.
+     * 
+     * @return Set of field names. An empty set if no result fields have been
+     *         defined.
+     */
+    public Set<String> getResultFields() {
+        return resultFields;
+    }
 
-	/**
-	 * Set the list of IDAT fields that can be retrieved with this token.
-	 * 
-	 * @param resultFields
-	 *            A collection of field names. Provide an empty collection if no
-	 *            result fields are desired.
-	 * @return The modified token object.
-	 */
-	public ReadPatientsToken setResultFields(Collection<String> resultFields) {
-		this.resultFields = new HashSet<String>(resultFields);
-		return this;
-	}
+    /**
+     * Set the list of IDAT fields that can be retrieved with this token.
+     * 
+     * @param resultFields
+     *            A collection of field names. Provide an empty collection if no
+     *            result fields are desired.
+     * @return The modified token object.
+     */
+    public ReadPatientsToken setResultFields(Collection<String> resultFields) {
+        this.resultFields = new HashSet<String>(resultFields);
+        return this;
+    }
 
-	/**
-	 * Add a field to the list of IDAT fields that should be retrieved.
-	 * 
-	 * @param fieldName
-	 *            Name of a field.
-	 * @return The modified token object.
-	 */
-	public ReadPatientsToken addResultField(String fieldName) {
-		this.resultFields.add(fieldName);
-		return this;
-	}
+    /**
+     * Add a field to the list of IDAT fields that should be retrieved.
+     * 
+     * @param fieldName
+     *            Name of a field.
+     * @return The modified token object.
+     */
+    public ReadPatientsToken addResultField(String fieldName) {
+        this.resultFields.add(fieldName);
+        return this;
+    }
 
-	/**
-	 * Get the list of ids that can be retrieved with this token.
-	 * 
-	 * @return Set of id type names. An empty list if none are defined.
-	 */
-	public Set<String> getResultIds() {
-		return resultIds;
-	}
+    /**
+     * Get the list of ids that can be retrieved with this token.
+     * 
+     * @return Set of id type names. An empty list if none are defined.
+     */
+    public Set<String> getResultIds() {
+        return resultIds;
+    }
 
-	/**
-	 * Set the list of id types to include in the result.
-	 * 
-	 * @param resultIds
-	 *            Collection of id type names. Provide an empty collection if no
-	 *            result ids are desired.
-	 */
-	public void setResultIds(Collection<String> resultIds) {
-		this.resultIds = new HashSet<String>(resultIds);
-	}
+    /**
+     * Set the list of id types to include in the result.
+     * 
+     * @param resultIds
+     *            Collection of id type names. Provide an empty collection if no
+     *            result ids are desired.
+     */
+    public void setResultIds(Collection<String> resultIds) {
+        this.resultIds = new HashSet<String>(resultIds);
+    }
 
-	/**
-	 * Add an id type to appear in the result.
-	 * 
-	 * @param idType
-	 *            An id type.
-	 * @return The modified token object.
-	 */
-	public ReadPatientsToken addResultId(String idType) {
-		this.resultIds.add(idType);
-		return this;
-	}
+    /**
+     * Add an id type to appear in the result.
+     * 
+     * @param idType
+     *            An id type.
+     * @return The modified token object.
+     */
+    public ReadPatientsToken addResultId(String idType) {
+        this.resultIds.add(idType);
+        return this;
+    }
 
-	@Override
-	public JSONObject toJSON() {
-		try {
-			JSONObject result = new JSONObject();
-			result.put("type", "readPatients");
-			JSONObject data = new JSONObject();
-			JSONArray dataSearchIds = new JSONArray();
-			for (ID id : searchIds)
-				dataSearchIds.put(id.toJSON());
-			data.put("searchIds", dataSearchIds);
-			data.put("resultFields", this.resultFields);
-			data.put("resultIds", this.resultIds);
-			result.put("data", data);
-			return result;
-		} catch (JSONException e) {
-			throw new Error(e);
-		}
-	}
+    @Override
+    public JSONObject toJSON() {
+        try {
+            JSONObject result = new JSONObject();
+            result.put("type", "readPatients");
+            JSONObject data = new JSONObject();
+            JSONArray dataSearchIds = new JSONArray();
+            for (ID id : searchIds)
+                dataSearchIds.put(id.toJSON());
+            data.put("searchIds", dataSearchIds);
+            data.put("resultFields", this.resultFields);
+            data.put("resultIds", this.resultIds);
+            result.put("data", data);
+            return result;
+        } catch (JSONException e) {
+            throw new Error(e);
+        }
+    }
 }
