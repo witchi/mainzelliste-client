@@ -7,6 +7,10 @@ Mainzelliste-Client handles the HTTP calls necessary for using Mainzelliste from
 
 ## Release notes
 
+### 1.0.1
+
+Bug fix: Header for API version was spelled incorrectly.
+
 ### 1.0
 Initial release.
 
