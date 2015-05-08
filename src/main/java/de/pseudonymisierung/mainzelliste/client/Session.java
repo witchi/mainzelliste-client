@@ -424,14 +424,14 @@ public class Session {
      */
     public String getToken(Token t) throws MainzellisteNetworkException, InvalidSessionException {
 
-        System.out.println("TOKEN = " + t.toJSON().toString());
+//        System.out.println("TOKEN = " + t.toJSON().toString());
 
         MainzellisteResponse response = this.connection.doRequest(RequestMethod.POST, this.getURI().resolve("tokens/").toString(), t
                 .toJSON().toString());
 
-        System.out.println("RCODE = " + response.getStatusCode());
+//        System.out.println("RCODE = " + response.getStatusCode());
 
-        System.out.println("JSON = " + response.getDataJSON().toString());
+//        System.out.println("JSON = " + response.getDataJSON().toString());
 
         if (response.getStatusCode() == 404)
             throw new InvalidSessionException();
