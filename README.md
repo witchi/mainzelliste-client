@@ -9,7 +9,14 @@ Mainzelliste-Client handles the HTTP calls necessary for using Mainzelliste from
 
 ### 1.0.2
 
-Bug fix: Fields added by AddPatientToken#addField did not appear in output of AddPatientToken#toJSON.
+####Bug fix
+
+- Fields added by AddPatientToken#addField did not appear in output of AddPatientToken#toJSON.
+
+####Other Changes
+
+- Removed debug messages.
+- Removed obsolete test class.
 
 ### 1.0.1
 
