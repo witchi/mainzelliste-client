@@ -13,7 +13,7 @@ Mainzelliste-Client handles the HTTP calls necessary for using Mainzelliste from
 
 - Fields added by AddPatientToken#addField did not appear in output of AddPatientToken#toJSON.
 
-####Other Changes
+####Other changes
 
 - Removed debug messages.
 - Removed obsolete test class.
