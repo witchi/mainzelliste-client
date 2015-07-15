@@ -7,6 +7,10 @@ Mainzelliste-Client handles the HTTP calls necessary for using Mainzelliste from
 
 ## Release notes
 
+### 1.1.0
+
+- Added JavaScript code for loading identifying data into the user's web browser.
+
 ### 1.0.2
 
 ####Bug fix
@@ -42,6 +46,21 @@ Use it as a dependency:
 	<version>1.0.0</version>
 </dependency>
 ```
+
+## Basic Usage
+
+Initialize the client for a specific Mainzelliste instance with the given URL and API key:
+
+```
+MainzellisteConnection con = new MainzellisteConnec-tion("https://patientenliste.de/beispiel", "sesame");
+```
+
+Create a session:
+
+```
+Session mySession = con.createSession();
+```
+
 
 ## Copyright and License
 Mainzelliste-Client has been released as part of OSSE and is thus licensed under the same conditions:
