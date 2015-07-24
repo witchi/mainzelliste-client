@@ -54,7 +54,14 @@ public class MainzellisteConnection {
      * Representation of HTTP methods.
      */
     public static enum RequestMethod {
-        GET, POST, PUT, DELETE;
+        /** HTTP GET method. */
+    	GET, 
+    	/** HTTP POST method. */
+    	POST, 
+    	/** HTTP PUT method. */
+    	PUT, 
+    	/** HTTP DELETE method */
+    	DELETE;
     }
 
     /**
