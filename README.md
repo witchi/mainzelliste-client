@@ -47,21 +47,6 @@ Use it as a dependency:
 </dependency>
 ```
 
-## Basic Usage
-
-Initialize the client for a specific Mainzelliste instance with the given URL and API key:
-
-```
-MainzellisteConnection con = new MainzellisteConnec-tion("https://patientenliste.de/beispiel", "sesame");
-```
-
-Create a session:
-
-```
-Session mySession = con.createSession();
-```
-
-
 ## Copyright and License
 Mainzelliste-Client has been released as part of OSSE and is thus licensed under the same conditions:
 
