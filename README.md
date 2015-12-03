@@ -43,7 +43,7 @@ Use it as a dependency:
 <dependency>
 	<groupId>de.pseudonymisierung</groupId>
 	<artifactId>mainzelliste-client</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 </dependency>
 ```
 
