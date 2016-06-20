@@ -33,8 +33,8 @@ import de.pseudonymisierung.mainzelliste.client.MainzellisteResponse;
 public class MainzellisteNetworkException extends Exception {
 
     /**
-	 *
-	 */
+     *
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -47,8 +47,8 @@ public class MainzellisteNetworkException extends Exception {
      * @return The created exception.
      */
     public static MainzellisteNetworkException fromResponse(MainzellisteResponse response) {
-        return new MainzellisteNetworkException("Request to Mainzelliste failed with status code " + response.getStatusCode()
-                + " and message " + response.getData());
+        return new MainzellisteNetworkException("Request to Mainzelliste failed with status code "
+                + response.getStatusCode() + " and message " + response.getData());
     }
 
     /**

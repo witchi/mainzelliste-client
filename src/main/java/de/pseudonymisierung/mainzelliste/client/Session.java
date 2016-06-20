@@ -228,8 +228,8 @@ public class Session {
      *             If a network error occured while making the request.
      * 
      */
-    public String getTempId(ID id, Collection<String> resultFields, Collection<String> resultIds) throws MainzellisteNetworkException,
-            InvalidSessionException {
+    public String getTempId(ID id, Collection<String> resultFields, Collection<String> resultIds)
+            throws MainzellisteNetworkException, InvalidSessionException {
 
         if (id == null)
             throw new NullPointerException("ID object passed to getTempId is null!");
@@ -308,8 +308,8 @@ public class Session {
         ID idToDelete = this.idByTempId.get(tempId);
         if (idToDelete != null)
             this.tempIdById.remove(idToDelete);
-        MainzellisteResponse response = this.connection.doRequest(RequestMethod.DELETE, getURI().resolve("tokens/").resolve(tempId)
-                .toString(), null);
+        MainzellisteResponse response = this.connection.doRequest(RequestMethod.DELETE,
+                getURI().resolve("tokens/").resolve(tempId).toString(), null);
         if (response.getStatusCode() == 404) {
             throw new InvalidSessionException();
         }
@@ -380,7 +380,8 @@ public class Session {
      *             If the session does not exist anymore on the Mainzelliste
      *             instance.
      */
-    public String getAddPatientToken(URL callback, String redirect) throws MainzellisteNetworkException, InvalidSessionException {
+    public String getAddPatientToken(URL callback, String redirect)
+            throws MainzellisteNetworkException, InvalidSessionException {
         AddPatientToken t = new AddPatientToken();
         t.callback(callback).redirect(redirect);
         return getToken(t);
@@ -401,7 +402,8 @@ public class Session {
      *             If the session does not exist anymore on the Mainzelliste
      *             instance.
      */
-    public String getEditPatientToken(ID patientToEdit, URL redirect) throws MainzellisteNetworkException, InvalidSessionException {
+    public String getEditPatientToken(ID patientToEdit, URL redirect)
+            throws MainzellisteNetworkException, InvalidSessionException {
 
         EditPatientToken t = new EditPatientToken(patientToEdit);
         t.redirect(redirect);
@@ -424,14 +426,14 @@ public class Session {
      */
     public String getToken(Token t) throws MainzellisteNetworkException, InvalidSessionException {
 
-//        System.out.println("TOKEN = " + t.toJSON().toString());
+        // System.out.println("TOKEN = " + t.toJSON().toString());
 
-        MainzellisteResponse response = this.connection.doRequest(RequestMethod.POST, this.getURI().resolve("tokens/").toString(), t
-                .toJSON().toString());
+        MainzellisteResponse response = this.connection.doRequest(RequestMethod.POST,
+                this.getURI().resolve("tokens/").toString(), t.toJSON().toString());
 
-//        System.out.println("RCODE = " + response.getStatusCode());
+        // System.out.println("RCODE = " + response.getStatusCode());
 
-//        System.out.println("JSON = " + response.getDataJSON().toString());
+        // System.out.println("JSON = " + response.getDataJSON().toString());
 
         if (response.getStatusCode() == 404)
             throw new InvalidSessionException();

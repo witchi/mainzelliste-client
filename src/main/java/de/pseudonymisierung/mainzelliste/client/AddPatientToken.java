@@ -136,13 +136,13 @@ public class AddPatientToken extends Token {
                 }
                 data.put("idTypes", idTypes);
             }
-            
+
             if (this.fields.size() > 0) {
-            	JSONObject fieldsJSON = new JSONObject();
-            	for (String fieldName : fields.keySet()) {
-            		fieldsJSON.put(fieldName, fields.get(fieldName));
-            	}
-            	data.put("fields", fields);
+                JSONObject fieldsJSON = new JSONObject();
+                for (String fieldName : fields.keySet()) {
+                    fieldsJSON.put(fieldName, fields.get(fieldName));
+                }
+                data.put("fields", fields);
             }
 
             token.put("data", data);

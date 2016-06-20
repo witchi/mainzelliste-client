@@ -55,13 +55,13 @@ public class MainzellisteConnection {
      */
     public static enum RequestMethod {
         /** HTTP GET method. */
-    	GET, 
-    	/** HTTP POST method. */
-    	POST, 
-    	/** HTTP PUT method. */
-    	PUT, 
-    	/** HTTP DELETE method */
-    	DELETE;
+        GET,
+        /** HTTP POST method. */
+        POST,
+        /** HTTP PUT method. */
+        PUT,
+        /** HTTP DELETE method */
+        DELETE;
     }
 
     /**
@@ -231,7 +231,8 @@ public class MainzellisteConnection {
                 try {
                     postRequest.setEntity(new StringEntity(data.toString()));
                 } catch (Throwable t) {
-                    throw new MainzellisteNetworkException("Error while performing a " + method + " request to " + absoluteUri, t);
+                    throw new MainzellisteNetworkException(
+                            "Error while performing a " + method + " request to " + absoluteUri, t);
                 }
             }
             request = postRequest;
@@ -243,7 +244,8 @@ public class MainzellisteConnection {
                 try {
                     putRequest.setEntity(new StringEntity(data.toString()));
                 } catch (Throwable t) {
-                    throw new MainzellisteNetworkException("Error while performing a " + method + " request to " + absoluteUri, t);
+                    throw new MainzellisteNetworkException(
+                            "Error while performing a " + method + " request to " + absoluteUri, t);
                 }
             }
             request = putRequest;
@@ -263,7 +265,8 @@ public class MainzellisteConnection {
         try {
             return new MainzellisteResponse(httpClient.execute(request));
         } catch (Throwable t) {
-            throw new MainzellisteNetworkException("Error while performing a " + method + " request to " + absoluteUri, t);
+            throw new MainzellisteNetworkException("Error while performing a " + method + " request to " + absoluteUri,
+                    t);
         }
     }
 }
