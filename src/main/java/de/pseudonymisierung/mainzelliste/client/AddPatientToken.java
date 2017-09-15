@@ -73,7 +73,7 @@ public class AddPatientToken extends Token {
     }
 
     /**
-     * Add a predefined fields. Can be used to include fields that should not be
+     * Add a predefined field. Can be used to include fields that should not be
      * entered by the user in the request to create a patient.
      * 
      * @param fieldName
