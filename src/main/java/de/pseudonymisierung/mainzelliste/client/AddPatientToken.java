@@ -88,6 +88,21 @@ public class AddPatientToken extends Token {
     }
 
     /**
+     * Add a predefined external ID. Can be used to set externally generated IDs
+     * for the patient found of created by the request using the token.
+     * 
+     * @param idType
+     *            Type of the external ID.
+     * @param idString
+     *            Value of the external ID to set.
+     * @return The modified token object.
+     */
+    public AddPatientToken addExternalId(String idType, String idString) {
+        // TODO Implementierung
+        return this;
+    }
+
+    /**
      * Set the URL to which Mainzelliste makes a callback request after creation
      * of the patient.
      * 
