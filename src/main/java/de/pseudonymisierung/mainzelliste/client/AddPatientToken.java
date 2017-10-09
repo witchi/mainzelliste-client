@@ -50,6 +50,11 @@ public class AddPatientToken extends Token {
      */
     private Map<String, String> fields = new HashMap<String, String>();
     /**
+     * Predefined external IDs. Map keys are ID types, values the corresponding
+     * ID strings.
+     */
+    private Map<String, String> externalIds = new HashMap<String, String>();
+    /**
      * Callback URL called by Mainzelliste after creating the patient.
      */
     private URL callback = null;
@@ -98,7 +103,7 @@ public class AddPatientToken extends Token {
      * @return The modified token object.
      */
     public AddPatientToken addExternalId(String idType, String idString) {
-        // TODO Implementierung
+        externalIds.put(idType, idString);
         return this;
     }
 
@@ -158,6 +163,14 @@ public class AddPatientToken extends Token {
                     fieldsJSON.put(fieldName, fields.get(fieldName));
                 }
                 data.put("fields", fields);
+            }
+
+            if (this.externalIds.size() > 0) {
+                JSONObject externalIdsJSON = new JSONObject();
+                for (String idType : externalIds.keySet()) {
+                    externalIdsJSON.put(idType, externalIds.get(idType));
+                }
+                data.put("ids", externalIds);
             }
 
             token.put("data", data);
