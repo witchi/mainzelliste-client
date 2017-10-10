@@ -130,6 +130,9 @@ public class EditPatientTokenTest {
 			EditPatientToken t = new EditPatientToken(patientToEdit);
 			t.redirect(redirectUrl);
 			checkRedirect(t, redirectUrl.toString());
+			t.redirect((URL) null);
+			assertFalse("Token still contains redirect after resetting: " + t.toJSON().toString(2),
+					t.toJSON().getJSONObject("data").has("redirect"));
 			t.redirect(redirectString);
 			checkRedirect(t, redirectString);
 			t.redirect((String) null);
