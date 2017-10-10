@@ -100,7 +100,7 @@ public class EditPatientTokenTest {
 			assertTrue("Token does not contain ID definitions: " + tokenJson.toString(2), tokenData.has("ids"));
 			assertEquals("ID list is not an array: " + tokenJson.toString(2), JSONArray.class,
 					tokenData.get("ids").getClass());
-			JSONArray ids = tokenData.getJSONArray("fields");
+			JSONArray ids = tokenData.getJSONArray("ids");
 			HashSet<String> idsBuffer = new HashSet<>(idTypes);
 			for (int i = 0; i < idTypes.size(); i++) {
 				String thisId = ids.getString(i);
@@ -114,6 +114,7 @@ public class EditPatientTokenTest {
 					t.toJSON().getJSONObject("data").has("ids"));
 
 		} catch (JSONException e) {
+			e.printStackTrace();
 			fail("Exception while handling JSON object: " + e);
 		}
 	}
