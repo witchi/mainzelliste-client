@@ -19,6 +19,10 @@ the fields that should be editable: In API 2.x and below, this means that all fi
 
 - AddPatientToken and EditPatientToken can handle externally generated IDs in accordance with Mainzelliste API 3.0.
 
+#### Bug fixes
+
+- `EditPatientToken#setFieldsToEdit()` and `EditPatientToken#redirect()` failed when being called with null argument.
+
 ### 1.1.0
 
 - Added JavaScript code for loading identifying data into the user's web browser.
