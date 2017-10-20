@@ -260,7 +260,7 @@ public class MainzellisteConnection {
 
         request.setHeader("mainzellisteApiKey", mainzellisteApiKey);
         request.setHeader("mainzellisteApiVersion", MAINZELLISTE_API_VERSION);
-        request.setHeader("Accepts", "application/json");
+        request.setHeader("Accept", "application/json");
 
         try {
             return new MainzellisteResponse(httpClient.execute(request));
