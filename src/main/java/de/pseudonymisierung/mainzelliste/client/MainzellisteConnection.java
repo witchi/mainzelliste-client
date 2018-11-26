@@ -229,7 +229,7 @@ public class MainzellisteConnection {
             if (data != null) {
                 postRequest.setHeader("Content-Type", "application/json");
                 try {
-                    postRequest.setEntity(new StringEntity(data.toString()));
+                    postRequest.setEntity(new StringEntity(data.toString(), "utf-8"));
                 } catch (Throwable t) {
                     throw new MainzellisteNetworkException(
                             "Error while performing a " + method + " request to " + absoluteUri, t);
