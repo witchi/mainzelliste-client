@@ -31,7 +31,8 @@ public class AddPatientTokenTest {
 
 	@Test
 	public void test() {
-		// Set some values for all parameters and check that JSON result is correct.
+		// Set some values for all parameters and check that JSON result is
+		// correct.
 		AddPatientToken t = new AddPatientToken();
 		Map<String, String> testFields = new HashMap<String, String>();
 		testFields.put("Vorname", "Karl");
@@ -54,7 +55,7 @@ public class AddPatientTokenTest {
 
 		try {
 			// check type
-			assertEquals("Wrong token type", "addPatient", tJSON.getString("type"));			
+			assertEquals("Wrong token type", "addPatient", tJSON.getString("type"));
 			// check fields
 			JSONObject dataJSON = tJSON.getJSONObject("data");
 			JSONObject fieldsJSON = dataJSON.getJSONObject("fields");
@@ -86,6 +87,39 @@ public class AddPatientTokenTest {
 			fail("Exception while reading from JSON output: " + e.getMessage());
 		}
 
+	}
+
+	/**
+	 * Test functionality to set externally generated ID in addPatient token.
+	 */
+	@Test
+	public void testExternalId() {
+		try {
+			String externalIdTypes[] = { "extId", "labId" };
+			String externalIdStrings[] = { "valueOfExtId", "valueOfLabId" };
+			AddPatientToken t = new AddPatientToken();
+			JSONObject tokenJson = t.toJSON();
+			JSONObject dataJson = tokenJson.getJSONObject("data");
+			assertFalse("Token has external IDs although none have been defined.",
+					tokenJson.has("ids") && dataJson.getJSONArray("ids").length() == 0);
+			for (int i = 0; i < externalIdTypes.length; i++) {
+				t.addExternalId(externalIdTypes[i], externalIdStrings[i]);
+				tokenJson = t.toJSON();
+				dataJson = tokenJson.getJSONObject("data");
+				assertTrue("Token does not contain added external ID(s)", dataJson.has("ids"));
+				JSONObject externalIds = dataJson.getJSONObject("ids");
+				assertEquals("Number of external ids differs", i + 1, externalIds.length());
+				for (int j = 0; j < i; j++) {
+					assertTrue("No external ID of expected type " + externalIdTypes[j] + " found",
+							externalIds.has(externalIdTypes[j]));
+					assertEquals("Value of external ID of type " + externalIdTypes[j] + " differs",
+							externalIdStrings[j], externalIds.getString(externalIdTypes[j]));
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+			fail("Caught JSONException");
+		}
 	}
 
 }

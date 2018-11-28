@@ -46,10 +46,13 @@ public class EditPatientToken extends Token {
      */
     private ID patientId;
     /**
-     * The fields that can be edited by using this token (null means: all
-     * fields).
+     * The fields that can be edited by using this token.
      */
     private Set<String> fieldsToEdit;
+    /**
+     * The external IDs that can be edited by using this token.
+     */
+    private Set<String> idsToEdit;
     /**
      * A URL to redirect the user to after the edit operation.
      */
@@ -64,18 +67,38 @@ public class EditPatientToken extends Token {
     public EditPatientToken(ID patientId) {
         this.patientId = patientId;
         fieldsToEdit = new HashSet<String>();
+        idsToEdit = new HashSet<String>();
     }
 
     /**
      * Set the fields that can be edited by using this token.
      * 
      * @param fieldNames
-     *            Collection of field names or null if all fields should be
-     *            editable.
+     *            Collection of field names or null if no fields should be
+     *            editable (the default).
      * @return The modified token object.
      */
     public EditPatientToken setFieldsToEdit(Collection<String> fieldNames) {
-        this.fieldsToEdit = new HashSet<String>(fieldNames);
+    	if (fieldNames == null)
+    		this.fieldsToEdit = new HashSet<String>();
+    	else
+    		this.fieldsToEdit = new HashSet<String>(fieldNames);
+        return this;
+    }
+
+    /**
+     * Set the external IDs that can be edited by using this token.
+     * 
+     * @param idTypes
+     *            Collection of id types or null if no ids should be
+     *            editable (the default).
+     * @return The modified token object.
+     */
+    public EditPatientToken setIdsToEdit(Collection<String> idTypes) {
+    	if (idTypes == null)
+    		this.idsToEdit = new HashSet<String>();
+    	else
+    		this.idsToEdit = new HashSet<String>(idTypes);
         return this;
     }
 
@@ -89,7 +112,10 @@ public class EditPatientToken extends Token {
      *             if url is not a syntactically valid URL.
      */
     public EditPatientToken redirect(String url) throws MalformedURLException {
-        this.redirect = new URL(url);
+    	if (url == null)
+    		this.redirect = null;
+    	else
+    		this.redirect = new URL(url);
         return this;
     }
 
@@ -120,6 +146,13 @@ public class EditPatientToken extends Token {
                     fieldsToEditJSON.put(s);
                 }
                 data.put("fields", fieldsToEditJSON);
+            }
+            if (this.idsToEdit.size() > 0) {
+                JSONArray idsToEditJSON = new JSONArray();
+                for (String s : idsToEdit) {
+                    idsToEditJSON.put(s);
+                }
+                data.put("ids", idsToEditJSON);
             }
             result.put("data", data);
             return result;
