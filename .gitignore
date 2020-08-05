@@ -1,6 +1,12 @@
+### ignore Eclipse specific files
 /.classpath
 /.project
 /.settings
+### ignore Intellij specific files
+.idea
+mainzelliste-client.iml
+### ignore build artifacts
+/target
+
 /bin
 /doc
-/target
