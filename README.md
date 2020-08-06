@@ -7,7 +7,7 @@ Mainzelliste-Client handles the HTTP calls necessary for using Mainzelliste from
 
 ## Release notes
 
-This section moved to (changelog.md)[changelog.md]
+This section moved to [changelog.md](./Changelog.md)
 
 ## Build
 

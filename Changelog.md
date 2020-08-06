@@ -1,4 +1,7 @@
 # Changelog
+### Unreleased
+#### New features
+- It is now possible to add audittrail information to tokens
 ### 2.0.0
 
 This release uses Mainzelliste API 3.0. Because the semantics of the editPatient token have changed, this release is not

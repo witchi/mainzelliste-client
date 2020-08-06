@@ -173,6 +173,10 @@ public class AddPatientToken extends Token {
                 data.put("ids", externalIds);
             }
 
+            if (this.getAuditTrailLog() != null) {
+                data.put("auditTrail", this.getAuditTrailLog().toJSON());
+            }
+
             token.put("data", data);
             return token;
         } catch (JSONException e) {
