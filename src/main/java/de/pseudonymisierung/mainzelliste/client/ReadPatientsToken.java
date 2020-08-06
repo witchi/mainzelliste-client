@@ -145,6 +145,9 @@ public class ReadPatientsToken extends Token {
             data.put("searchIds", dataSearchIds);
             data.put("resultFields", this.resultFields);
             data.put("resultIds", this.resultIds);
+            if (this.getAuditTrailLog() != null) {
+                data.put("auditTrail", this.getAuditTrailLog().toJSON());
+            }
             result.put("data", data);
             return result;
         } catch (JSONException e) {

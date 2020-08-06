@@ -154,6 +154,9 @@ public class EditPatientToken extends Token {
                 }
                 data.put("ids", idsToEditJSON);
             }
+            if (this.getAuditTrailLog() != null) {
+                data.put("auditTrail", this.getAuditTrailLog().toJSON());
+            }
             result.put("data", data);
             return result;
         } catch (JSONException e) {
