@@ -25,17 +25,14 @@
  */
 package de.pseudonymisierung.mainzelliste.client;
 
-import de.pseudonymisierung.mainzelliste.client.MainzellisteResponse;
-
 /**
  * Exception for errors concerning the network connection to the Idat server.
  */
 public class MainzellisteNetworkException extends Exception {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
+
+    private MainzellisteResponse response;
 
     /**
      * Create an instance from an instance of {@link MainzellisteResponse}. The
@@ -48,7 +45,7 @@ public class MainzellisteNetworkException extends Exception {
      */
     public static MainzellisteNetworkException fromResponse(MainzellisteResponse response) {
         return new MainzellisteNetworkException("Request to Mainzelliste failed with status code "
-                + response.getStatusCode() + " and message " + response.getData());
+                + response.getStatusCode() + " and message " + response.getData(), response);
     }
 
     /**
@@ -79,6 +76,17 @@ public class MainzellisteNetworkException extends Exception {
     }
 
     /**
+     * Create an instance with a custom error message and the response of mainzelliste.
+     *
+     * @param message A custom error message.
+     * @param response mainzelliste response.
+     */
+    private MainzellisteNetworkException(String message, MainzellisteResponse response) {
+        super(message);
+        this.response = response;
+    }
+
+    /**
      * Create an instance with a custom error message and cause t.
      *
      * @param message
@@ -88,5 +96,13 @@ public class MainzellisteNetworkException extends Exception {
      */
     public MainzellisteNetworkException(String message, Throwable t) {
         super(message, t);
+    }
+
+    /**
+     * instance of the mainzelliste error response, containing error code and message.
+     * @return null if no error response are the cause of this exception
+     */
+    public MainzellisteResponse getErrorResponse() {
+        return response;
     }
 }
