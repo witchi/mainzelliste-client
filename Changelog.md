@@ -2,6 +2,8 @@
 ### Unreleased
 #### New features
 - It is now possible to add audittrail information to tokens
+#### Changed
+- MainzellisteClient will now use Version 3.2 of Mainzelliste Api
 #### Refactor
 - `MainzellisteNetworkException` now provide the mainzelliste error response, tha cause the exception
 ### 2.0.0
