@@ -67,7 +67,7 @@ public class MainzellisteConnection {
     /**
      * API version to use when making requests to Mainzelliste.
      */
-    private static final String MAINZELLISTE_API_VERSION = "3.0";
+    private static final String MAINZELLISTE_API_VERSION = "3.2";
     /**
      * API key used to authenticate against Mainzelliste.
      */
