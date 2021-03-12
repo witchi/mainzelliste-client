@@ -33,15 +33,13 @@ import org.apache.http.util.EntityUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
-
 /**
  * Encapsulates the response to an HTTP request to a Mainzelliste instance.
  * Constructed by
  * {@link MainzellisteConnection#doRequest(de.pseudonymisierung.mainzelliste.client.MainzellisteConnection.RequestMethod, String, String)}
  * MainzellisteConnection#doRequest()}
  */
-class MainzellisteResponse {
+public class MainzellisteResponse {
 
     /**
      * Returned HTTP status code.

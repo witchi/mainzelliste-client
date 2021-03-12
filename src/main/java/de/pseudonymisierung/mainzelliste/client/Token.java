@@ -45,12 +45,35 @@ public abstract class Token {
     private String tokenId;
 
     /**
+     * AuditTrail information related to this token
+     */
+    private AuditTrailLog auditTrailLog;
+
+    /**
      * Get the token identifier.
      * 
      * @return The identifier of this token.
      */
     public String getTokenId() {
         return this.tokenId;
+    }
+
+    /**
+     * Get the AuditTrail information of this token.
+     *
+     * @return The AuditTrail information related to this token.
+     */
+    public AuditTrailLog getAuditTrailLog() {
+      return auditTrailLog;
+    }
+
+    /**
+     * Add the AuditTrail information to this token.
+     *
+     * @param auditTrailLog, contains necessary information for AuditTrail
+     */
+    public void setAuditTrailLog(AuditTrailLog auditTrailLog) {
+      this.auditTrailLog = auditTrailLog;
     }
 
     /**
