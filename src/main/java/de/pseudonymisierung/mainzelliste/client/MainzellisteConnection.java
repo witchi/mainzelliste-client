@@ -158,6 +158,15 @@ public class MainzellisteConnection {
     }
 
     /**
+     * Creates a new {@link Validator}
+     * @return
+     * @throws MainzellisteNetworkException
+     */
+    public Validator createValidator() throws MainzellisteNetworkException {
+        return new Validator(this);
+    }
+
+    /**
      * Restore a session from a server. It is verified that a session with the
      * given session id exists on the Mainzelliste instance and all temp ids
      * (i.e. "readPatients" tokens that allow for reading a single patient) are
