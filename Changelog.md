@@ -1,11 +1,11 @@
 # Changelog
-### Unreleased
+### [2.1.0 - 2021-09-27]
 #### New features
-- It is now possible to add audittrail information to tokens
+- It is now possible to add AuditTrail information to tokens
 #### Changed
 - MainzellisteClient will now use Version 3.2 of Mainzelliste Api
 #### Refactor
-- `MainzellisteNetworkException` now provide the mainzelliste error response, tha cause the exception
+- `MainzellisteNetworkException` now provide the mainzelliste error response, that caused the exception
 ### 2.0.0
 
 This release uses Mainzelliste API 3.0. Because the semantics of the editPatient token have changed, this release is not
