@@ -240,13 +240,7 @@ public class Session {
             return tempId;
 
         // Otherwise get temp-id from Mainzelliste and store in cache
-        ReadPatientsToken t = new ReadPatientsToken();
-        if (resultFields != null)
-            t.setResultFields(resultFields);
-        if (resultIds != null)
-            t.setResultIds(resultIds);
-        t.addSearchId(id);
-        tempId = this.getToken(t);
+        tempId = getReadPatientsToken(id, Integer.MAX_VALUE, resultFields, resultIds);
         tempIdById.put(id, tempId);
         idByTempId.put(tempId, id);
         return tempId;
@@ -361,6 +355,18 @@ public class Session {
         return tempIdById.keySet();
     }
 
+    public String getReadPatientsToken(ID id, int allowedUses, Collection<String> resultFields, Collection<String> resultIds)
+            throws MainzellisteNetworkException, InvalidSessionException {
+        ReadPatientsToken t = new ReadPatientsToken();
+        t.setAllowedUses(allowedUses);
+        if (resultFields != null)
+            t.setResultFields(resultFields);
+        if (resultIds != null)
+            t.setResultIds(resultIds);
+        t.addSearchId(id);
+        return getToken(t);
+    }
+    
     /**
      * Get a token of type 'addPatient', which authorizes to create one patient
      * on the Mainzelliste. The returned string is typically handed to the
