@@ -62,7 +62,7 @@ public class Session {
     /**
      * Connection to the Mainzelliste on which this session exists.
      */
-    private MainzellisteConnection connection;
+    protected MainzellisteConnection connection;
     /**
      * List of field names that are used by default in connection with temporary
      * identifiers.
@@ -102,7 +102,7 @@ public class Session {
      *            A MainzellisteConnections object that represents the instance
      *            on which this session was created.
      */
-    Session(String id, MainzellisteConnection connection) {
+    protected Session(String id, MainzellisteConnection connection) {
         this.id = id;
         this.connection = connection;
         this.defaultResultFields = null;
@@ -287,7 +287,7 @@ public class Session {
      * @see Session#setDefaultResultFields(Collection)
      * @see Session#setDefaultResultIds(Collection)
      * 
-     * @see Session#getTempId(ID, Collection, Collection)
+     * @see Session#getTempId(ID, int, Collection, Collection)
      */
     public String getTempId(ID id) throws MainzellisteNetworkException, InvalidSessionException {
         return getTempId(id, defaultAllowedUses, defaultResultFields, defaultResultIds);
