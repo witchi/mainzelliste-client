@@ -44,15 +44,17 @@ public class ReadPatientsToken extends Token {
     /**
      * Permanent identifiers of patients whose data should be retreived.
      */
-    private LinkedList<ID> searchIds = new LinkedList<ID>();;
+    private LinkedList<ID> searchIds = new LinkedList<ID>();
     /**
      * List of names of IDAT fields that should appear in the result.
      */
-    private Set<String> resultFields = new HashSet<String>();;
+    private Set<String> resultFields = new HashSet<String>();
     /**
      * List of types of identifiers that should appear in the result.
      */
-    private Set<String> resultIds = new HashSet<String>();;
+    private Set<String> resultIds = new HashSet<String>();
+
+    private int allowedUses = 1;
 
     /**
      * Add a patient to the list of patients for which data should be retreived.
@@ -76,6 +78,25 @@ public class ReadPatientsToken extends Token {
         return resultFields;
     }
 
+    /**
+     * Set the usage counter of the token. If you don't set it, the default will be 1.
+     */
+    public void setAllowedUses(int uses) {
+        if (uses <= 0) {
+            throw new IllegalArgumentException("allowedUses must be greater than 0");
+        }
+        this.allowedUses = uses;
+    }
+
+    /**
+     * Get the "allowedUses" attribute of the token.
+     *
+     * @return the counter maximum usage.
+     */
+    public int getAllowedUses() {
+        return this.allowedUses;
+    }
+    
     /**
      * Set the list of IDAT fields that can be retrieved with this token.
      * 
@@ -138,6 +159,7 @@ public class ReadPatientsToken extends Token {
         try {
             JSONObject result = new JSONObject();
             result.put("type", "readPatients");
+            result.put("allowedUses", getAllowedUses());
             JSONObject data = new JSONObject();
             JSONArray dataSearchIds = new JSONArray();
             for (ID id : searchIds)
