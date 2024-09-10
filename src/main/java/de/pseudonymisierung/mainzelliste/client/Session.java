@@ -79,12 +79,10 @@ public class Session {
      * @see Session#setDefaultResultIds(Collection)
      */
     private Set<String> defaultResultIds;
-
     /**
      * The default usage counter of a token.
      */
-    private int defaultAllowedUses = 1;
-    
+    private int defaultAllowedUses = 1; 
     /**
      * Cache for mapping of permanent temporary identifiers.
      */
@@ -207,10 +205,20 @@ public class Session {
         this.defaultResultIds = new HashSet<String>(defaultResultIds);
     }
 
+    /**
+     * Get the current default allowedUses counter for {@link Session#getTempId(ID)}.
+     *
+     * @return Number of allowed uses for a token, default is 1.
+     */
     public int getDefaultAllowedUses() {
         return defaultAllowedUses;
     }
 
+    /**
+     * Set the default allowedUses counter for {@link Session#getTempId(ID)}.
+     *
+     * @param defaultUses The number of allowed uses for a token.
+     */
     public void setDefaultAllowedUses(int defaultUses) {
         this.defaultAllowedUses = defaultUses;
     }
@@ -224,6 +232,8 @@ public class Session {
      * @param id
      *            A permanent identifier of the patient for which to obtain a
      *            temporary id.
+     * @param allowedUses
+     *            The allowed uses for the token (till it will invalid, default 1).
      * @param resultFields
      *            The IDAT fields that can be retreived by this temp-id. Legal
      *            values are all field names that are configured on the
