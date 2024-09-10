@@ -48,7 +48,7 @@ import de.pseudonymisierung.mainzelliste.client.MainzellisteNetworkException;
  * providing access to the Mainzelliste instance to be used by session objects.
  * 
  */
-public class MainzellisteConnection {
+public class MainzellisteConnection implements SessionEditable {
 
     /**
      * Representation of HTTP methods.
@@ -226,7 +226,7 @@ public class MainzellisteConnection {
      * @throws MainzellisteNetworkException
      *             If a network error occurs while making the request.
      */
-    MainzellisteResponse doRequest(RequestMethod method, String path, String data) throws MainzellisteNetworkException {
+    public MainzellisteResponse doRequest(RequestMethod method, String path, String data) throws MainzellisteNetworkException {
         HttpUriRequest request;
         URI absoluteUri = mainzellisteURI.resolve(path);
         switch (method) {
@@ -274,8 +274,34 @@ public class MainzellisteConnection {
         try {
             return new MainzellisteResponse(httpClient.execute(request));
         } catch (Throwable t) {
-            throw new MainzellisteNetworkException("Error while performing a " + method + " request to " + absoluteUri,
-                    t);
+            throw new MainzellisteNetworkException("Error while performing a " + method + " request to " + absoluteUri, t);
         }
+    }
+
+    /**
+     * @return <code>null</code> for mainzelliste dows not need any data
+     * @since 15.01.2018
+     * @author Thomas Fritsche
+     */
+    protected String getCreateSessionData() {
+        return null;
+    }
+
+    /**
+     * @return "mainzellisteApiVersion"
+     * @since 15.01.2018
+     * @author Thomas Fritsche
+     */
+    protected String getApiVersionHeaderKey() {
+        return "mainzellisteApiVersion";
+    }
+
+    /**
+     * @return "mainzellisteApiKey"
+     * @since 15.01.2018
+     * @author Thomas Fritsche
+     */
+    protected String getApiKeyHeaderKey() {
+        return "mainzellisteApiKey";
     }
 }
