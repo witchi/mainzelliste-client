@@ -81,6 +81,11 @@ public class Session {
     private Set<String> defaultResultIds;
 
     /**
+     * The default usage counter of a token.
+     */
+    private int defaultAllowedUses = 1;
+    
+    /**
      * Cache for mapping of permanent temporary identifiers.
      */
     private Map<ID, String> tempIdById;
@@ -202,6 +207,14 @@ public class Session {
         this.defaultResultIds = new HashSet<String>(defaultResultIds);
     }
 
+    public int getDefaultAllowedUses() {
+        return defaultAllowedUses;
+    }
+
+    public void setDefaultAllowedUses(int defaultUses) {
+        this.defaultAllowedUses = defaultUses;
+    }
+    
     /**
      * Get a temporary identifier (temp-id). A temp-id is an identifier for a
      * patient for the duration of a session. It acts furthermore as an
@@ -228,7 +241,7 @@ public class Session {
      *             If a network error occured while making the request.
      * 
      */
-    public String getTempId(ID id, Collection<String> resultFields, Collection<String> resultIds)
+    public String getTempId(ID id, int allowedUses, Collection<String> resultFields, Collection<String> resultIds)
             throws MainzellisteNetworkException, InvalidSessionException {
 
         if (id == null)
@@ -240,7 +253,7 @@ public class Session {
             return tempId;
 
         // Otherwise get temp-id from Mainzelliste and store in cache
-        tempId = getReadPatientsToken(id, Integer.MAX_VALUE, resultFields, resultIds);
+        tempId = getReadPatientsToken(id, allowedUses, resultFields, resultIds);
         tempIdById.put(id, tempId);
         idByTempId.put(tempId, id);
         return tempId;
@@ -267,7 +280,7 @@ public class Session {
      * @see Session#getTempId(ID, Collection, Collection)
      */
     public String getTempId(ID id) throws MainzellisteNetworkException, InvalidSessionException {
-        return getTempId(id, defaultResultFields, defaultResultIds);
+        return getTempId(id, defaultAllowedUses, defaultResultFields, defaultResultIds);
     }
 
     /**
@@ -355,7 +368,7 @@ public class Session {
         return tempIdById.keySet();
     }
 
-    public String getReadPatientsToken(ID id, int allowedUses, Collection<String> resultFields, Collection<String> resultIds)
+    protected String getReadPatientsToken(ID id, int allowedUses, Collection<String> resultFields, Collection<String> resultIds)
             throws MainzellisteNetworkException, InvalidSessionException {
         ReadPatientsToken t = new ReadPatientsToken();
         t.setAllowedUses(allowedUses);
