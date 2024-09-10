@@ -53,7 +53,9 @@ public class ReadPatientsToken extends Token {
      * List of types of identifiers that should appear in the result.
      */
     private Set<String> resultIds = new HashSet<String>();
-
+    /**
+     * The usage counter for the token (server handles number of allowed uses).
+     */
     private int allowedUses = 1;
 
     /**
@@ -80,6 +82,8 @@ public class ReadPatientsToken extends Token {
 
     /**
      * Set the usage counter of the token. If you don't set it, the default will be 1.
+     *
+     * @param uses The number of allowed uses for the token.
      */
     public void setAllowedUses(int uses) {
         if (uses <= 0) {
